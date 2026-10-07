@@ -93,6 +93,7 @@ body.no-hz .ru .sy b{font-size:.8em}
 .mlabel.done .no{background:var(--leaf)}
 .mlabel.locked{background:#d8d8e4;color:var(--muted)}
 .mlabel.chest{background:#fff3b0}
+.msg-box{height:1.6em;vertical-align:middle;margin:0 4px;image-rendering:pixelated;image-rendering:crisp-edges}
 /* 關卡名字寫在區塊的格子裡 */
 .zsign{position:absolute;transform:translate(-50%,-62%);display:flex;align-items:center;gap:5px;white-space:nowrap;padding:2px 10px 2px 3px;
   font-weight:900;font-size:15px;line-height:1.2;color:var(--ink);background:linear-gradient(#ffe27a,#f5b52a);border:3px solid var(--ink);border-radius:8px;
@@ -173,6 +174,23 @@ div.walker{cursor:default}
 .blank.now{background:#fff3b0;animation:glow 1s steps(2) infinite;outline:3px solid var(--gold);outline-offset:1px}
 .blank.done{background:#d4f4c8}
 .clk-keys{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.rainbow-view{background:linear-gradient(#ffd6e0,#fff4c8 35%,#d4f4e0 70%,#d0e4ff)}
+.rb-wrap{height:100%;width:100%;max-width:760px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.rb-doors{flex:none;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(4px,1vw,10px);width:min(100%,620px);height:clamp(56px,13vh,96px)}
+.rdoor{position:relative;height:100%;background:var(--c);border:3px solid var(--ink);border-bottom:0;border-radius:50% 50% 0 0/36% 36% 0 0;box-shadow:inset 0 0 0 3px rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center}
+.rdoor .num{display:flex;align-items:center;justify-content:center;min-width:1.9em;height:1.5em;padding:0 2px;background:#fff;border:3px solid var(--ink);font-family:var(--f-px);font-size:clamp(10px,1.6vw,15px);color:var(--ink)}
+.rdoor.now{outline:4px solid var(--gold);outline-offset:2px}
+.rdoor.now .num{background:#fff3b0;animation:glow 1s steps(2) infinite}
+.rdoor.open{background:color-mix(in srgb,var(--c) 45%,#fff)}
+.rdoor.open .num{background:#d4f4c8;color:#2f7a1e}
+.rdoor.shake{animation:shake .3s steps(3)}
+.rb-stage{flex:1 1 0;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+.seqrow{display:flex;gap:clamp(6px,1.4vw,14px)}
+.seqbox{display:flex;align-items:center;justify-content:center;width:2.4em;height:1.9em;font-family:var(--f-px);font-size:clamp(18px,3.6vw,34px);background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
+.seqbox.q{background:#fff3b0;color:var(--brick)}
+#rbCv{height:100%;max-width:100%;aspect-ratio:152/80;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:6px 6px 0 rgba(0,0,0,.25)}
+.rb-keys{flex:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;width:min(100%,560px)}
+.rb-keys .rk-c{background:#ffe0c0}.rb-keys .rk-ok{background:#3cb048;color:#fff}
 .block-view{background:#8a6ab0 repeating-linear-gradient(45deg,transparent 0 22px,rgba(255,255,255,.08) 22px 26px)}
 .shp{display:inline-block;border:2px solid var(--ink);box-sizing:border-box}
 .shp.sq{width:16px;height:16px;background:#ff5a5a}
@@ -289,7 +307,7 @@ a.btn{text-decoration:none;display:inline-block}
 .dnav .arr:active{transform:translateY(4px);box-shadow:none}
 .dnav .mid{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px}
 .dnav h3{margin:0;font-size:24px;font-weight:900;display:flex;align-items:center;gap:6px}
-.dots{display:flex;gap:8px}
+.dots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:100%}
 .dots button{width:30px;height:30px;font-size:16px;line-height:1;background:#fff;border:3px solid var(--ink);cursor:pointer;padding:0;opacity:.5}
 .dots button[aria-current="true"]{background:var(--gold);opacity:1}
 .opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:104px;gap:10px;align-content:start;height:calc(104px * 3 + 10px * 2)}   /* 固定九格的高度，換頁不會跳 */
@@ -432,6 +450,9 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
   .dino-ans{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
   .dino-ans.n10{grid-template-columns:repeat(5,minmax(0,1fr))}
   .clock-view{height:auto}
+  .rb-doors{height:clamp(50px,9vh,70px)}
+  .rdoor{border-width:2px}
+  .rdoor .num{border-width:2px;min-width:1.6em}
   .clock-wrap{flex-direction:column;gap:8px}
   #clkSvg{height:min(160px,25vh);max-width:none}
   .clock-side{flex:none;width:100%}
@@ -471,8 +492,11 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
   .dnav .arr{width:44px;height:44px}
   .dnav h3{font-size:17px;gap:3px}
   .subpg{font-size:8px;padding:2px 3px;margin-left:2px}
-  .ihint{font-size:13px;margin-bottom:4px;height:26px}
-  .dots button{width:26px;height:26px;font-size:14px}
+  .ihint{font-size:12px;margin-bottom:4px;height:26px;text-align:center;white-space:nowrap;letter-spacing:-.04em}
+  .dots button{width:24px;height:24px;font-size:13px}
+  .dots{gap:4px}
+  .x{top:4px;right:4px;font-size:12px;padding:1px 5px;border-width:2px}
+  .x + .headline{font-size:24px!important}
   .opts{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;grid-auto-rows:84px;height:calc(84px * 3 + 8px * 2)}
   .th{min-width:0;padding:3px 2px 1px;font-size:11px}
   .th canvas{width:100%;height:48px}
@@ -525,6 +549,19 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
           <div class="tr-cards" id="trAns"></div>
         </div>
         <div class="dino-ans tr-num" id="trNum" hidden></div>
+      </div>
+    </div>
+    <!-- 第 6 關：彩虹島（數的順序、數水果） -->
+    <div class="view dino-view rainbow-view" id="rainbowView" hidden>
+      <div class="rb-wrap">
+        <div class="rb-doors" id="rbDoors"></div>
+        <div class="rb-stage" id="rbStage"></div>
+        <div class="rb-keys" id="rbKeys">
+          <button class="ans" data-rk="1">1</button><button class="ans" data-rk="2">2</button><button class="ans" data-rk="3">3</button>
+          <button class="ans" data-rk="4">4</button><button class="ans" data-rk="5">5</button><button class="ans" data-rk="6">6</button>
+          <button class="ans" data-rk="7">7</button><button class="ans" data-rk="8">8</button><button class="ans" data-rk="9">9</button>
+          <button class="ans" data-rk="0">0</button><button class="ans rk-c" data-rk="c" aria-label="清除">✱</button><button class="ans rk-ok" data-rk="ok" aria-label="確定">✔</button>
+        </div>
       </div>
     </div>
     <!-- 第 5 關：時鐘島（整點、半點） -->
@@ -642,6 +679,7 @@ const W = {
   isl3:['交通島', 'ㄐㄧㄠ ㄊㄨㄥ ㄉㄠˇ'],
   isl4:['積木島', 'ㄐㄧ ㄇㄨˋ ㄉㄠˇ'],
   isl5:['時鐘島', 'ㄕˊ ㄓㄨㄥ ㄉㄠˇ'],
+  isl6:['彩虹島', 'ㄘㄞˇ ㄏㄨㄥˊ ㄉㄠˇ'],
   blkDone:['六題都答對了！', 'ㄌㄧㄡˋ ㄊㄧˊ ㄉㄡ ㄉㄚˊ ㄉㄨㄟˋ ˙ㄌㄜ！'],
   carsGo:['出發！', 'ㄔㄨ ㄈㄚ！'],
   trQ:['哪一台車開的路最短？', 'ㄋㄚˇ ㄧ ㄊㄞˊ ㄔㄜ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ ㄗㄨㄟˋ ㄉㄨㄢˇ？'],
@@ -789,7 +827,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-spea
 const COATS = [['#c8a064','卡其色','ㄎㄚˇ ㄑㄧˊ ㄙㄜˋ'],['#d8402c','紅色','ㄏㄨㄥˊ ㄙㄜˋ'],['#2c64d8','藍色','ㄌㄢˊ ㄙㄜˋ'],['#3c9c28','綠色','ㄌㄩˋ ㄙㄜˋ'],['#8c48c8','紫色','ㄗˇ ㄙㄜˋ'],['#f078a8','粉紅色','ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ'],['#3a3a4a','黑色','ㄏㄟ ㄙㄜˋ'],['#f0c040','黃色','ㄏㄨㄤˊ ㄙㄜˋ']];
 const HAIR_C = [['#2a2a36','黑色','ㄏㄟ ㄙㄜˋ'],['#6a3e1e','咖啡色','ㄎㄚ ㄈㄟ ㄙㄜˋ'],['#f0c040','金色','ㄐㄧㄣ ㄙㄜˋ'],['#d84a2a','紅色','ㄏㄨㄥˊ ㄙㄜˋ'],['#3a6ad8','藍色','ㄌㄢˊ ㄙㄜˋ'],['#f08cc0','粉紅色','ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ'],['#e8e8f0','白色','ㄅㄞˊ ㄙㄜˋ']];
 const HAIRS = [['short','短髮','ㄉㄨㄢˇ ㄈㄚˇ'],['long','長髮','ㄔㄤˊ ㄈㄚˇ'],['pony','馬尾','ㄇㄚˇ ㄨㄟˇ'],['bob','妹妹頭','ㄇㄟˋ ˙ㄇㄟ ㄊㄡˊ'],['spiky','刺刺頭','ㄘˋ ㄘˋ ㄊㄡˊ'],['bun','丸子頭','ㄨㄢˊ ˙ㄗ ㄊㄡˊ']];
-const GLASSES = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['round','圓眼鏡','ㄩㄢˊ ㄧㄢˇ ㄐㄧㄥˋ'],['square','方眼鏡','ㄈㄤ ㄧㄢˇ ㄐㄧㄥˋ'],['sun','墨鏡','ㄇㄛˋ ㄐㄧㄥˋ'],['mono','單眼鏡','ㄉㄢ ㄧㄢˇ ㄐㄧㄥˋ']];
+const GLASSES = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['round','圓眼鏡','ㄩㄢˊ ㄧㄢˇ ㄐㄧㄥˋ'],['square','方眼鏡','ㄈㄤ ㄧㄢˇ ㄐㄧㄥˋ'],['sun','墨鏡','ㄇㄛˋ ㄐㄧㄥˋ'],['mono','單眼鏡','ㄉㄢ ㄧㄢˇ ㄐㄧㄥˋ'],['star','星星眼鏡','ㄒㄧㄥ ˙ㄒㄧㄥ ㄧㄢˇ ㄐㄧㄥˋ'],['heart','愛心眼鏡','ㄞˋ ㄒㄧㄣ ㄧㄢˇ ㄐㄧㄥˋ']];
 const HATS = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['deer','偵探帽','ㄓㄣ ㄊㄢˋ ㄇㄠˋ'],['cap','棒球帽','ㄅㄤˋ ㄑㄧㄡˊ ㄇㄠˋ'],['helmet','安全帽','ㄢ ㄑㄩㄢˊ ㄇㄠˋ'],['wizard','巫師帽','ㄨ ㄕ ㄇㄠˋ'],['douli','斗笠','ㄉㄡˇ ㄌㄧˋ']];
 // 破關獎勵：每過一關得到一樣，放進裝備箱裡那個島的分類。[id, 國字, 注音, 穿在哪裡]
 // pet 寵物（站在小偵探旁邊）、hand 拿在右手、back 背在後面、outfit 換掉整套衣服
@@ -859,7 +897,15 @@ const REWARDS = [
   ['cape', '披風', 'ㄆㄧ ㄈㄥ', 'back'],
   ['police', '警察裝', 'ㄐㄧㄥˇ ㄔㄚˊ ㄓㄨㄤ', 'outfit'],
   ['princess', '公主裝', 'ㄍㄨㄥ ㄓㄨˇ ㄓㄨㄤ', 'outfit'],
-  ['lollipop', '棒棒糖', 'ㄅㄤˋ ㄅㄤˋ ㄊㄤˊ', 'hand']
+  ['lollipop', '棒棒糖', 'ㄅㄤˋ ㄅㄤˋ ㄊㄤˊ', 'hand'],
+  // 彩虹島的獎勵：手上拿的東西（背包背在後面）
+  ['bat', '球棒', 'ㄑㄧㄡˊ ㄅㄤˋ', 'hand', ['一支', 'ㄧ ㄓ']],
+  ['basketball', '籃球', 'ㄌㄢˊ ㄑㄧㄡˊ', 'hand', ['一顆', 'ㄧ ㄎㄜ']],
+  ['glove', '棒球手套', 'ㄅㄤˋ ㄑㄧㄡˊ ㄕㄡˇ ㄊㄠˋ', 'hand', ['一個', 'ㄧ ˙ㄍㄜ']],
+  ['doll', '娃娃', 'ㄨㄚˊ ˙ㄨㄚ', 'hand', ['一個', 'ㄧ ˙ㄍㄜ']],
+  ['phone', '手機', 'ㄕㄡˇ ㄐㄧ', 'hand', ['一支', 'ㄧ ㄓ']],
+  ['handbag', '手提包', 'ㄕㄡˇ ㄊㄧˊ ㄅㄠ', 'hand', ['一個', 'ㄧ ˙ㄍㄜ']],
+  ['backpack', '背包', 'ㄅㄟ ㄅㄠ', 'back', ['一個', 'ㄧ ˙ㄍㄜ']]
 ];
 const DEFAULT_LOOK = { coat:0, hair:'short', hairC:0, glasses:'none', hat:'none', hand:'none', back:'none', outfit:'none', pet:'none', feet:'none', ride:'none' };
 
@@ -869,7 +915,9 @@ const SP_W = 22, SP_H = 25;
 const ITEM_COLS = {
   deer:['#9a7448', '#7a5430'], cap:['#d8402c', '#a82a1a'], helmet:['#ffd23c', '#f0b820', '#e8a820', '#fff2a0'],
   wizard:['#6a3ab8', '#4a2a8a', '#7a4ac8'], douli:['#e8c870', '#c8a050', '#fff0b8'],
-  round:['#7a4a22'], square:['#2c64d8'], sun:['#1b1b2f'], mono:['#f0c040']
+  round:['#7a4a22'], square:['#2c64d8'], sun:['#1b1b2f'], mono:['#f0c040'], star:['#ffd23c'], heart:['#ff4a78'],
+  bat:['#c88a4a', '#e0a868'], basketball:['#f07820', '#ffb070'], glove:['#a8683a', '#7a4a24'], doll:['#ff6ea8'], phone:['#2c64d8'],
+  handbag:['#e05a9a', '#a83470'], backpack:['#3c9c3c', '#2c7c2c', '#5cc05c']
 };
 function itemSwap(id){
   const col = S.vcol[id], list = ITEM_COLS[id];
@@ -895,6 +943,12 @@ function spriteCanvas(look, only){
     R(2, 11, 14, 6, '#c8283c'); R(2, 16, 14, 1, '#a01a2c'); R(15, 12, 1, 4, '#a01a2c');
     R(3, 11, 12, 1, '#ffd23c');
   }
+  // 背包（背在後面，從左邊露出來）
+  SW = itemSwap(look.back);
+  if (on('back') && look.back === 'backpack'){
+    R(0, 11, 5, 6, '#3c9c3c'); R(0, 16, 5, 1, '#2c7c2c'); R(0, 11, 1, 6, '#2c7c2c'); R(1, 13, 3, 2, '#5cc05c'); R(1, 10, 3, 1, '#2c7c2c');
+  }
+  SW = null;
   // 後面的頭髮
   if (on('hair')){
     if (look.hair === 'long'){ R(2, 3, 3, 10, hs); R(14, 4, 2, 8, hs); }
@@ -942,6 +996,7 @@ function spriteCanvas(look, only){
     if (holding) R(14, 11, 1, 2, skin); else R(13, 14, 1, 1, sks);
   }
   // 右手拿的東西
+  SW = itemSwap(look.hand);
   if (on('hand') || holding){
     if (look.hand === 'magnifier'){
       R(15, 9, 1, 3, '#7a4a22');
@@ -951,8 +1006,21 @@ function spriteCanvas(look, only){
       R(15, 8, 1, 4, '#f4f4f4');
       R(14, 4, 3, 3, '#ff6aa8'); R(15, 3, 1, 1, '#ff6aa8'); R(13, 5, 1, 1, '#ff6aa8'); R(17, 5, 1, 1, '#ff6aa8'); R(15, 7, 1, 1, '#ff6aa8');
       R(15, 5, 1, 1, '#ffffff'); R(14, 4, 1, 1, '#ffd0e4');
+    } else if (look.hand === 'bat'){        // 球棒：從手上斜斜往上
+      R(15, 10, 1, 2, '#5a3418'); R(16, 8, 1, 2, '#c88a4a'); R(17, 6, 1, 2, '#c88a4a'); R(18, 3, 2, 3, '#c88a4a'); R(19, 1, 1, 2, '#c88a4a'); R(18, 4, 1, 1, '#e0a868');
+    } else if (look.hand === 'basketball'){ // 籃球
+      R(15, 5, 3, 1, '#f07820'); R(14, 6, 5, 3, '#f07820'); R(15, 9, 3, 1, '#f07820'); R(16, 5, 1, 5, '#7a3a10'); R(14, 7, 5, 1, '#7a3a10'); R(15, 6, 1, 1, '#ffb070');
+    } else if (look.hand === 'glove'){      // 棒球手套
+      R(14, 7, 5, 5, '#a8683a'); R(14, 6, 1, 1, '#a8683a'); R(16, 5, 1, 2, '#a8683a'); R(18, 6, 1, 1, '#a8683a'); R(15, 8, 3, 1, '#7a4a24'); R(15, 10, 3, 1, '#e0c090');
+    } else if (look.hand === 'doll'){       // 娃娃
+      R(15, 3, 3, 1, '#c83c3c'); R(15, 4, 3, 3, '#f8c8a0'); R(14, 4, 1, 2, '#c83c3c'); R(16, 5, 1, 1, ink); R(15, 7, 3, 4, '#ff6ea8'); R(14, 9, 5, 2, '#ff6ea8'); R(16, 8, 1, 1, '#ffffff');
+    } else if (look.hand === 'phone'){      // 手機
+      R(15, 6, 3, 6, '#2c64d8'); R(16, 7, 1, 3, '#bfe8ff'); R(16, 11, 1, 1, '#ffffff');
+    } else if (look.hand === 'handbag'){    // 手提包：掛在手上
+      R(14, 13, 1, 1, '#a83470'); R(17, 13, 1, 1, '#a83470'); R(14, 12, 4, 1, '#a83470'); R(13, 14, 6, 4, '#e05a9a'); R(13, 17, 6, 1, '#a83470'); R(15, 15, 2, 1, '#ffd23c');
     }
   }
+  SW = null;
   // 頭：臉微微朝右，左邊有耳朵和陰影
   if (on('body')){
     R(4, 2, 10, 9, skin); R(3, 3, 12, 7, skin);
@@ -991,6 +1059,14 @@ function spriteCanvas(look, only){
   } else if (look.glasses === 'sun'){
     R(8, 5, 6, 1, ink); R(8, 6, 3, 2, ink); R(11, 6, 3, 2, ink); R(5, 6, 3, 1, ink);
     R(9, 6, 1, 1, '#8a8aff'); R(12, 6, 1, 1, '#8a8aff');
+  } else if (look.glasses === 'star'){    // 星星眼鏡：兩顆黃色星星
+    const gc = '#ffd23c';
+    [8, 11].forEach(x => { R(x + 1, 4, 1, 1, gc); R(x, 5, 3, 2, gc); R(x - 1, 5, 1, 1, gc); R(x + 3, 5, 1, 1, gc); R(x, 7, 1, 1, gc); R(x + 2, 7, 1, 1, gc); });
+    R(5, 6, 3, 1, gc);
+  } else if (look.glasses === 'heart'){   // 愛心眼鏡：兩顆粉紅愛心
+    const gc = '#ff4a78';
+    [8, 11].forEach(x => { R(x, 5, 1, 1, gc); R(x + 2, 5, 1, 1, gc); R(x, 6, 3, 1, gc); R(x + 1, 7, 1, 1, gc); });
+    R(5, 6, 3, 1, gc);
   } else if (look.glasses === 'mono'){
     const gc = '#f0c040';
     R(12, 5, 1, 1, gc); R(12, 8, 1, 1, gc); R(11, 6, 1, 2, gc); R(13, 6, 1, 2, gc); R(13, 9, 1, 2, gc);
@@ -1039,7 +1115,7 @@ function paint(cv, look){
   g.drawImage(spriteCanvas(look), 0, 0);
 }
 // 換裝小圖：只畫那一部分，並裁成剛好的大小 [x, y, 寬, 高]
-const PART_CROP = { hair:[0, 2, 19, 18], coat:[2, 16, 16, 9], outfit:[2, 16, 16, 9], glasses:[3, 8, 15, 10], hat:[0, 0, 21, 10], hand:[13, 8, 9, 12], back:[2, 16, 16, 9], pet:[0, 0, 18, 15], feet:[3, 20, 14, 6], ride:[0, 0, 26, 16] };
+const PART_CROP = { hair:[0, 2, 19, 18], coat:[2, 16, 16, 9], outfit:[2, 16, 16, 9], glasses:[3, 8, 15, 10], hat:[0, 0, 21, 10], hand:[12, 6, 10, 18], back:[2, 16, 16, 9], pet:[0, 0, 18, 15], feet:[3, 20, 14, 6], ride:[0, 0, 26, 16] };
 // 小動物：臉朝左（看著小偵探），外面描深色邊
 const ANIMAL_CACHE = {};
 function animalCanvas(id){
@@ -1226,7 +1302,7 @@ function renderDet(){
 }
 
 // 藏寶圖上的六個島（位置在下面的 MAP 裡，用 1～6 標出入口）。目前只有第 1 關動物島可以玩。
-const ISLANDS = [{ name:W.isl1, ready:true }, { name:W.isl2, ready:true }, { name:W.isl3, ready:true }, { name:W.isl4, ready:true }, { name:W.isl5, ready:true }, {}];
+const ISLANDS = [{ name:W.isl1, ready:true }, { name:W.isl2, ready:true }, { name:W.isl3, ready:true }, { name:W.isl4, ready:true }, { name:W.isl5, ready:true }, { name:W.isl6, ready:true }];
 // 藏寶圖的提示：走到下一個還沒過關的島
 function mapMsg(){
   const nx = ISLANDS.findIndex((isl, i) => unlocked(i) && isl.ready && !S.done.includes(i));
@@ -1247,6 +1323,12 @@ function renderHud(pop){
     const qi = S.tr ? S.tr.qi : 0;
     $('lvname').innerHTML = `<span class="tag">LV 3</span><span>${T(W.isl3)}</span><span class="info" aria-hidden="true">?</span>`;
     $('slots').innerHTML = [1, 2, 3, 4].map(i => `<div class="slot ${i <= qi ? 'got' : ''} ${pop === i ? 'pop' : ''}" title="第${i}題"><span class="ic" style="font-size:24px">🚗</span></div>`).join('');
+    return;
+  }
+  if (S.view === 'rainbow'){
+    const qi = S.rb ? S.rb.qi : 0;
+    $('lvname').innerHTML = `<span class="tag">LV 6</span><span>${T(W.isl6)}</span><span class="info" aria-hidden="true">?</span>`;
+    $('slots').innerHTML = RB_COLS.map((col, i) => `<div class="slot ${i < qi ? 'got' : ''} ${pop === i + 1 ? 'pop' : ''}" title="第${i + 1}道門"><span class="ic" style="display:inline-block;width:12px;height:16px;background:${col};border:2px solid #1b1b2f;border-radius:7px 7px 0 0"></span></div>`).join('');
     return;
   }
   if (S.view === 'clock'){
@@ -1302,11 +1384,13 @@ function showView(){
   $('dinoView').hidden = S.view !== 'dino';
   $('blockView').hidden = S.view !== 'block';
   $('clockView').hidden = S.view !== 'clock';
+  $('rainbowView').hidden = S.view !== 'rainbow';
   $('trafficView').hidden = S.view !== 'traffic';
   if (S.view === 'map'){ renderMapBg(); renderMapLabels(); refreshMapSprite(); }
   else if (S.view === 'dino') renderDino();
   else if (S.view === 'block') renderBlocks();
   else if (S.view === 'clock') renderClock();
+  else if (S.view === 'rainbow') renderRainbow();
   else if (S.view === 'traffic') renderTraffic();
   else renderBuilding();
   renderDet(); renderHud();
@@ -1318,6 +1402,7 @@ function enterIsland(i){
   if (i === 2){ enterTraffic(); return; }
   if (i === 3){ enterBlocks(); return; }
   if (i === 4){ enterClock(); return; }
+  if (i === 5){ enterRainbow(); return; }
   SFX.ok();
   S.view = 'island';
   newRun();
@@ -1436,6 +1521,11 @@ function zoneFloor(g, ox, oy, x, y, i){
     P(g, ox + 2 + ri(x, y, 3, 10), oy + 2 + ri(x, y, 4, 4), '#aab0c8', 3, 1);
     return;
   }
+  if (i === 5){   // 彩虹島：七種顏色的淺色地磚
+    const cols = ['#ffd0d0', '#ffe0c0', '#fff4b8', '#d8f4c8', '#d0e8ff', '#d8d8ff', '#ecd8ff'];
+    P(g, ox, oy, cols[(x + y) % 7], 16, 16); P(g, ox, oy + 15, 'rgba(0,0,0,.06)', 16, 1); P(g, ox + 15, oy, 'rgba(0,0,0,.06)', 1, 16);
+    return;
+  }
   if (i === 4){   // 時鐘島：淺藍色地磚＋小齒輪
     P(g, ox, oy, '#cfe6ff', 16, 16); P(g, ox, oy + 15, '#b0d0f0', 16, 1); P(g, ox + 15, oy, '#b0d0f0', 1, 16);
     if (hash(x, y, 350) < .4){ const gx = ox + 4 + ri(x, y, 351, 6), gy = oy + 4 + ri(x, y, 352, 6); P(g, gx, gy - 1, '#8ab0d8', 3, 5); P(g, gx - 1, gy, '#8ab0d8', 5, 3); P(g, gx + 1, gy + 1, '#cfe6ff'); }
@@ -1509,6 +1599,7 @@ function islandArt(z, i){
     : i === 2 ? { rim:'#eeeef6', c1:'#4a4a5a', c2:'#6a6a7a', c3:'#9a9aaa' }
     : i === 3 ? { rim:'#fff4fc', c1:'#5a3a7a', c2:'#7a5aa0', c3:'#b8a0d8' }
     : i === 4 ? { rim:'#f0f8ff', c1:'#2a5a8a', c2:'#4a7ab0', c3:'#9ac0e8' }
+    : i === 5 ? { rim:'#ffffff', c1:'#8a4a8a', c2:'#b06ab0', c3:'#e8b8e8' }
     : { rim:'#c4f490', c1:'#7a4a22', c2:'#b07a40', c3:'#ecc890' };
   const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16), 255];
   const im = g.getImageData(0, 0, CW, CH), a = im.data, edge = [];
@@ -1540,7 +1631,15 @@ function islandArt(z, i){
     P(g, ox + 4, oy + 3, '#4a4e6a', 6, 2); P(g, ox + 8, oy + 5, '#4a4e6a', 2, 3); P(g, ox + 6, oy + 8, '#4a4e6a', 2, 2); P(g, ox + 6, oy + 12, '#4a4e6a', 2, 2);
   } else {
     const dx = cx - 19, dy = cy - 9, bx = cx + 2, by = cy - 11;
-    if (i === 4){   // 鐘塔
+    if (i === 5){   // 彩虹
+      const cx2 = bx + 8, cy2 = by + 14;
+      ['#ff4a4a', '#ff9a20', '#ffd23c', '#4cc048', '#3c9cf0', '#9a5ae0'].forEach((col, k) => {
+        const r1 = 11 - k, r0 = r1 - 1;
+        for (let y = -r1; y <= 0; y++) for (let x = -r1; x <= r1; x++){ const d = Math.hypot(x, y); if (d <= r1 + .4 && d > r0 + .4) P(g, cx2 + x, cy2 + y, col); }
+      });
+      for (let y = -12; y <= 0; y++) for (let x = -12; x <= 12; x++){ const d = Math.hypot(x, y); if (d > 11.4 && d <= 12.4) P(g, cx2 + x, cy2 + y, INK); }
+      P(g, cx2 - 12, cy2, INK, 7, 1); P(g, cx2 + 6, cy2, INK, 7, 1);
+    } else if (i === 4){   // 鐘塔
       P(g, bx + 3, by, INK, 11, 17); P(g, bx + 4, by + 1, '#d8a868', 9, 15); P(g, bx + 4, by + 1, '#ecc890', 2, 15);
       for (let k = 0; k < 5; k++){ P(g, bx + 7 - k, by - 5 + k, INK, 2 * k + 3, 1); if (k) P(g, bx + 8 - k, by - 5 + k, '#3c64c8', 2 * k + 1, 1); }
       P(g, bx + 5, by + 2, INK, 7, 7); P(g, bx + 6, by + 3, '#ffffff', 5, 5); P(g, bx + 8, by + 3, INK, 1, 3); P(g, bx + 8, by + 5, INK, 2, 1);
@@ -1564,7 +1663,8 @@ function islandArt(z, i){
       P(g, bx + 6, by, '#c8c8d8', 2, 2); P(g, bx + 9, by - 2, '#c8c8d8', 2, 2); P(g, bx + 7, by - 4, '#e0e0ea', 2, 2);
     }
     g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(dx + 3, dy + 15, 13, 2);
-    if (i === 4){   // 紅色鬧鐘
+    if (i === 5) g.drawImage(fruitCanvas('apple'), dx + 1, dy + 1);   // 蘋果
+    else if (i === 4){   // 紅色鬧鐘
       P(g, dx + 3, dy, INK, 4, 4); P(g, dx + 4, dy + 1, '#ffd23c', 2, 2); P(g, dx + 12, dy, INK, 4, 4); P(g, dx + 13, dy + 1, '#ffd23c', 2, 2);
       for (let y = -7; y <= 7; y++) for (let x = -7; x <= 7; x++){ const d = x * x + y * y; if (d <= 49) P(g, dx + 9 + x, dy + 9 + y, d > 38 ? INK : d > 20 ? '#e83838' : '#ffffff'); }
       P(g, dx + 9, dy + 6, INK, 1, 4); P(g, dx + 9, dy + 9, INK, 3, 1); P(g, dx + 4, dy + 16, INK, 2, 2); P(g, dx + 13, dy + 16, INK, 2, 2);
@@ -1630,8 +1730,7 @@ const pct = (x, y) => `left:${x / MCOLS * 100}%;top:${y / MROWS * 100}%`;
 function renderMapLabels(){
   // 島上不寫名字，只有圖案；過關的島插一面小旗子
   $('mlayer').innerHTML = ZONES.map((z, i) => S.done.includes(i) ? `<div class="zflag2" style="${pct(z.cx + .9, z.y0 + .1)}">🚩</div>` : '').join('')
-    + `<div class="mlabel chest" style="${pct(chestTile.x + 1, chestTile.y + 1)}">📷 ${T(W.photo)}</div>`
-    + `<div class="mlabel chest" style="${pct(boxTile.x + .5, boxTile.y - .9)}">🎒 ${T(W.box)}</div>`;
+    + `<div class="mlabel chest" style="${pct(chestTile.x + 1, chestTile.y + 1)}">📷 ${T(W.photo)}</div>`;
 }
 
 // ---------- 走路 ----------
@@ -1763,11 +1862,11 @@ function drawMap(){
     } else drawFlip(mctx, meSpr, me.px - 3, me.py - 8 - bob, me.face === 'l');
   }});
   ents.sort((a, b) => a.y - b.y).forEach(e => e.f());
-  // 一開始在裝備箱上面畫跳動的「！」，提示可以點它換裝；打開過一次就不再顯示
-  if (!boxOpened){
-    const j = Math.floor(frame / 20) % 2, bx = (boxTile.x + 1) * TS + 2, by = boxTile.y * TS + 1 - j;
-    P(mctx, bx, by, INK, 10, 12); P(mctx, bx + 1, by + 1, '#ffffff', 8, 10);
-    P(mctx, bx + 4, by + 2, '#e03030', 2, 5); P(mctx, bx + 4, by + 8, '#e03030', 2, 2);
+  // 第一次進來：裝備箱一閃一閃，提示可以點它換裝；打開過一次就不再閃
+  if (!boxOpened && Math.floor(frame / 18) % 2){
+    const bx = boxTile.x * TS, by = boxTile.y * TS;
+    P(mctx, bx - 1, by + 1, '#fff36a', 18, 2); P(mctx, bx - 1, by + 15, '#fff36a', 18, 2); P(mctx, bx - 1, by + 1, '#fff36a', 2, 16); P(mctx, bx + 15, by + 1, '#fff36a', 2, 16);
+    mctx.fillStyle = 'rgba(255,255,255,.35)'; mctx.fillRect(bx + 1, by + 3, 14, 12);
   }
 }
 function mapLoop(){ updateMap(); if (S.view === 'map') drawMap(); requestAnimationFrame(mapLoop); }
@@ -1804,7 +1903,8 @@ const DRESS_CATS = [
   ['isl', '🦕', W.isl2, () => DINO_PRIZES],
   ['isl', '🚗', W.isl3, () => TRAFFIC_PRIZES],
   ['isl', '🧱', W.isl4, () => BLOCK_PRIZES],
-  ['isl', '⏰', W.isl5, () => CLOCK_PRIZES]
+  ['isl', '⏰', W.isl5, () => CLOCK_PRIZES],
+  ['isl', '🌈', W.isl6, () => RAINBOW_PRIZES]
 ];
 let dressPage = 0, dressSub = 0;   // 第幾類、這一類的第幾頁（一頁最多九個）
 const PER_PAGE = 9;
@@ -2657,13 +2757,16 @@ function paintCanvas(){
 const PAINT_WHO = {
   ride:['要幫哪一台換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ㄊㄞˊ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？'],
   hat:['要幫哪一頂換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ㄉㄧㄥˇ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？'],
+  hand:['要幫哪一個換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ˙ㄍㄜ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？'],
   glasses:['要幫哪一副換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ㄈㄨˋ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？']
 };
 function paintPanel(slot, ids, againFn){
   SFX.item();
   const items = ids.filter(id => S.items.includes(id)).map(id => REWARDS.find(r => r[0] === id));
   const who = PAINT_WHO[slot];
+  const slotOf = id => REWARDS.find(r => r[0] === id)[3];
   const drawItem = (cv, id) => {
+    const slot = slotOf(id);
     if (slot === 'ride'){ cv.width = 26; cv.height = 16; const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(vehicleCanvas(id), 0, 0); }
     else paintPart(cv, { ...S.look, outfit:'none', [slot]:id }, slot);
   };
@@ -2690,9 +2793,9 @@ function paintPanel(slot, ids, againFn){
     if (r){ SFX.blip(); pick = items.find(x => x[0] === r.dataset.pick); draw(); }
     else if (e.target.closest('[data-back]')){ SFX.blip(); pick = null; draw(); }
     else if (sw && pick){
-      S.vcol[pick[0]] = sw.dataset.col; S.look[slot] = pick[0]; save(); renderDet(); refreshMapSprite();
+      S.vcol[pick[0]] = sw.dataset.col; S.look[pick[3]] = pick[0]; save(); renderDet(); refreshMapSprite();
       const done = [`${pick[1]}換新顏色了！`, `${pick[2]} ㄏㄨㄢˋ ㄒㄧㄣ ㄧㄢˊ ㄙㄜˋ ˙ㄌㄜ！`];
-      celebrate('', { look:{ ...S.look }, part:slot, text:done }, true, againFn, true);
+      celebrate('', { look:{ ...S.look }, part:pick[3], text:done }, true, againFn, true);
       setMsg(done, '🎨', 'ok');
     }
   };
@@ -2897,12 +3000,13 @@ const HELP_KID = [
   ['🚦', '紅燈停，數一數汽車和機車', 'ㄏㄨㄥˊ ㄉㄥ ㄊㄧㄥˊ，ㄕㄨˇ ㄧ ㄕㄨˇ ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ'],
   ['🅿️', '汽車和機車，哪一種比較多', 'ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ，ㄋㄚˇ ㄧ ㄓㄨㄥˇ ㄅㄧˇ ㄐㄧㄠˋ ㄉㄨㄛ'],
   ['🧱', '數一數積木有幾個正方形、長方形、圓形、三角形', 'ㄕㄨˇ ㄧ ㄕㄨˇ ㄐㄧ ㄇㄨˋ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ、ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ、ㄩㄢˊ ㄒㄧㄥˊ、ㄙㄢ ㄐㄧㄠˇ ㄒㄧㄥˊ'],
+  ['🌈', '數字按照順序排，數一數水果有幾個', 'ㄕㄨˋ ㄗˋ ㄢˋ ㄓㄠˋ ㄕㄨㄣˋ ㄒㄩˋ ㄆㄞˊ，ㄕㄨˇ ㄧ ㄕㄨˇ ㄕㄨㄟˇ ㄍㄨㄛˇ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ'],
   ['⏰', '看時鐘，短針、長針指在哪裡，是幾點', 'ㄎㄢˋ ㄕˊ ㄓㄨㄥ，ㄉㄨㄢˇ ㄓㄣ、ㄔㄤˊ ㄓㄣ ㄓˇ ㄗㄞˋ ㄋㄚˇ ˙ㄌㄧ，ㄕˋ ㄐㄧˇ ㄉㄧㄢˇ'],
   ['🔢', '一排積木，從前面或後面數第幾個', 'ㄧ ㄆㄞˊ ㄐㄧ ㄇㄨˋ，ㄘㄨㄥˊ ㄑㄧㄢˊ ˙ㄇㄧㄢ ㄏㄨㄛˋ ㄏㄡˋ ˙ㄇㄧㄢ ㄕㄨˇ ㄉㄧˋ ㄐㄧˇ ˙ㄍㄜ'],
   ['🚨', '錯三次，警鈴會響', 'ㄘㄨㄛˋ ㄙㄢ ㄘˋ，ㄐㄧㄥˇ ㄌㄧㄥˊ ㄏㄨㄟˋ ㄒㄧㄤˇ'],
   ['🔑', '點對的鑰匙，關掉警鈴', 'ㄉㄧㄢˇ ㄉㄨㄟˋ ˙ㄉㄜ ㄧㄠˋ ˙ㄕ，ㄍㄨㄢ ㄉㄧㄠˋ ㄐㄧㄥˇ ㄌㄧㄥˊ'],
 ];
-const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點地圖左上角的裝備箱可以換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），後面每個島各有一個分類按鈕（動物島、恐龍島、交通島、積木島、時鐘島），放那個島破關得到的獎勵（帽子是積木島的獎勵，眼鏡是時鐘島的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物（狗狗、貓咪、兔子、小豬、小雞、鴨子、天竺鼠、熊熊，每次隨機出現一隻還沒救過的，救過的不會再出現）或一樣食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾）：裝備箱裡還沒有動物時一定是動物，之後動物和食物隨機，八隻都救出來以後就只有食物。打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進裝備箱，在裝備箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後改送恐龍造型餅乾：暴龍、三角龍、腕龍、劍龍、翼龍，可以選一隻動物餵牠）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車、馬車裡隨機送一樣還沒拿到的；六樣都拿到後改送顏料，可以選一台交通工具換成八種顏色之一；在裝備箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，積木之間不會疊在一起，同一種形狀大小都一樣，長方形可以橫放或直放，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。接著是排順序：十個積木橫排成一列，左邊寫「前」、右邊寫「後」，問兩題「從前面（後面）數來第幾個是什麼形狀？」，一題從前面、一題從後面，點形狀卡作答（卡片只有形狀、沒有顏色）。六題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的；五頂都拿到後改送顏料，可以選一頂帽子換顏色。第 5 關「時鐘島」練習認識整點和半點：一次四個時鐘（兩個整點、兩個半點），短針是紅色、長針是藍色，右邊分三次問、一格一格填數字（點 1～12）：先問短針（整點「短針指在（ ）。」、半點「短針指在（ ）和（ ）之間。」，「和」前後兩格可以對調），再問長針「長針指在（ ）。」，最後問「是（ ）點。」或「是（ ）點半。」，答過的句子會留在上面。四個時鐘都填對就過關，從圓眼鏡、方眼鏡、墨鏡、單眼鏡裡隨機送一副還沒拿到的；四副都拿到後改送顏料，可以選一副眼鏡換顏色。之後的關卡會得到放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
+const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點地圖左上角的裝備箱可以換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），後面每個島各有一個分類按鈕（動物島、恐龍島、交通島、積木島、時鐘島），放那個島破關得到的獎勵（帽子是積木島的獎勵，眼鏡是時鐘島的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物（狗狗、貓咪、兔子、小豬、小雞、鴨子、天竺鼠、熊熊，每次隨機出現一隻還沒救過的，救過的不會再出現）或一樣食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾）：裝備箱裡還沒有動物時一定是動物，之後動物和食物隨機，八隻都救出來以後就只有食物。打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進裝備箱，在裝備箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後改送恐龍造型餅乾：暴龍、三角龍、腕龍、劍龍、翼龍，可以選一隻動物餵牠）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車、馬車裡隨機送一樣還沒拿到的；六樣都拿到後改送顏料，可以選一台交通工具換成八種顏色之一；在裝備箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，積木之間不會疊在一起，同一種形狀大小都一樣，長方形可以橫放或直放，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。接著是排順序：十個積木橫排成一列，左邊寫「前」、右邊寫「後」，問兩題「從前面（後面）數來第幾個是什麼形狀？」，一題從前面、一題從後面，點形狀卡作答（卡片只有形狀、沒有顏色）。六題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的；五頂都拿到後改送顏料，可以選一頂帽子換顏色。第 5 關「時鐘島」練習認識整點和半點：一次四個時鐘（兩個整點、兩個半點），短針是紅色、長針是藍色，右邊分三次問、一格一格填數字（點 1～12）：先問短針（整點「短針指在（ ）。」、半點「短針指在（ ）和（ ）之間。」，「和」前後兩格可以對調），再問長針「長針指在（ ）。」，最後問「是（ ）點。」或「是（ ）點半。」，答過的句子會留在上面。四個時鐘都填對就過關，從圓眼鏡、方眼鏡、墨鏡、單眼鏡、星星眼鏡、愛心眼鏡裡隨機送一副還沒拿到的；六副都拿到後改送顏料，可以選一副眼鏡換顏色。第 6 關「彩虹島」練習 50 以內數的順序和數數：有七道彩虹門，每道門上有一格號碼，用下面的數字鍵輸入答案再按 ✔（✱ 清除；電腦可以直接打數字、Enter 確定）。第 1～3 道門是一排五個連續的數字（最大到 50），其中一個是問號，問「按照順序，問號是多少？」；第 4 道門畫面上有 10～29 個水果（三、四種隨機），問「總共有幾個水果？」；第 5～7 道門畫面上有兩種水果、數量不一樣（各 2～9 個），依序問「第一種有幾個？」「第二種有幾個？」「總共有幾個水果？」。七道門都打開就過關，從球棒、籃球、棒球手套、娃娃、手機、手提包、背包裡隨機送一樣還沒拿到的（背包背在背上，其他拿在手上）；七樣都拿到後改送顏料，可以選一樣換顏色。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
 const HELP_COMMON = '上方按鈕：「國字」關掉可只看注音；「👂 聽」開啟後，題目旁才會出現「🔊聽」按鈕，可用瀏覽器朗讀；「音效」開關遊戲音效；「地圖」回到藏寶圖（不會清掉進度）。偵探的造型和過關進度只存在這台裝置的瀏覽器裡。';
 let helpOpen = false;
 function openHelp(){
@@ -3217,6 +3321,143 @@ function clockCleared(){
     true, () => enterClock(), true);
 }
 
+/* ================= 第 6 關：彩虹島（數的順序、數水果） ================= */
+// 七道彩虹門，每道門上有一格號碼，用下面的數字鍵輸入答案、按 ✔：
+//   第 1～3 道：一排連續的數字（最大到 50），中間有一個問號，「按照順序，問號是多少？」
+//   第 4 道：畫面上有 10～29 個水果（種類隨機），「總共有幾個水果？」
+//   第 5～7 道：兩種水果、數量不一樣，依序問「第一種有幾個？」「第二種有幾個？」「總共有幾個水果？」
+const RB_COLS = ['#ff4a4a', '#ff9a20', '#ffd23c', '#4cc048', '#3c9cf0', '#4a5ad8', '#9a5ae0'];
+const RB_T = {
+  seq:['按照順序，問號是多少？', 'ㄢˋ ㄓㄠˋ ㄕㄨㄣˋ ㄒㄩˋ，ㄨㄣˋ ㄏㄠˋ ㄕˋ ㄉㄨㄛ ㄕㄠˇ？'],
+  all:['總共有幾個水果？', 'ㄗㄨㄥˇ ㄍㄨㄥˋ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄕㄨㄟˇ ㄍㄨㄛˇ？'],
+  done:['七道彩虹門都打開了！', 'ㄑㄧ ㄉㄠˋ ㄘㄞˇ ㄏㄨㄥˊ ㄇㄣˊ ㄉㄡ ㄉㄚˇ ㄎㄞ ˙ㄌㄜ！'],
+  clear:['清除', 'ㄑㄧㄥ ㄔㄨˊ']
+};
+const FRUITS = [
+  { id:'apple',  name:['蘋果', 'ㄆㄧㄥˊ ㄍㄨㄛˇ'] },
+  { id:'banana', name:['香蕉', 'ㄒㄧㄤ ㄐㄧㄠ'] },
+  { id:'orange', name:['橘子', 'ㄐㄩˊ ˙ㄗ'] },
+  { id:'straw',  name:['草莓', 'ㄘㄠˇ ㄇㄟˊ'] },
+  { id:'grape',  name:['葡萄', 'ㄆㄨˊ ˙ㄊㄠ'] },
+  { id:'melon',  name:['西瓜', 'ㄒㄧ ㄍㄨㄚ'] },
+  { id:'cherry', name:['櫻桃', 'ㄧㄥ ㄊㄠˊ'] },
+  { id:'peach',  name:['桃子', 'ㄊㄠˊ ˙ㄗ'] }
+];
+const FRUIT_CACHE = {};
+function fruitCanvas(id){
+  if (FRUIT_CACHE[id]) return FRUIT_CACHE[id];
+  const c = document.createElement('canvas'); c.width = c.height = 16;
+  const g = c.getContext('2d'), R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  const disc = (cx, cy, r, f) => { for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++){ const d = Math.hypot(x + .5 - cx, y + .5 - cy); if (d <= r){ const col = f(d, x, y); if (col) R(x, y, 1, 1, col); } } };
+  if (id === 'apple'){ disc(8, 9.5, 5.5, (d, x, y) => x + y > 19 && d > 3 ? '#c02828' : '#e83838'); R(5, 7, 2, 2, '#ffa0a0'); R(8, 2, 1, 3, '#7a4a20'); R(9, 2, 3, 2, '#3cb048'); }
+  else if (id === 'banana'){
+    [[2, 7, 2, 2], [3, 9, 3, 2], [5, 10, 4, 2], [8, 10, 3, 2], [10, 8, 2, 3], [11, 6, 2, 3], [12, 4, 1, 3]].forEach(([x, y, w, h]) => R(x, y, w, h, '#ffd83c'));
+    R(4, 11, 6, 1, '#e8b020'); R(11, 9, 1, 2, '#e8b020'); R(12, 3, 1, 1, '#7a5a20'); R(1, 7, 1, 1, '#7a5a20');
+  }
+  else if (id === 'orange'){ disc(8, 9, 5.5, (d, x, y) => x + y > 19 && d > 3 ? '#e07810' : '#ff9a20'); R(5, 6, 2, 1, '#ffd090'); R(8, 3, 1, 1, '#7a4a20'); R(9, 2, 2, 2, '#3cb048'); }
+  else if (id === 'straw'){
+    [[3, 5, 10], [3, 6, 10], [4, 7, 8], [4, 8, 8], [5, 9, 6], [5, 10, 6], [6, 11, 4], [7, 12, 2]].forEach(([x, y, w]) => R(x, y, w, 1, '#ff3a50'));
+    R(4, 4, 8, 1, '#3cb048'); R(6, 3, 4, 1, '#3cb048'); R(7, 2, 2, 1, '#2a8c38');
+    [[5, 6], [9, 6], [7, 8], [10, 8], [6, 10], [8, 10]].forEach(([x, y]) => R(x, y, 1, 1, '#fff07a'));
+  }
+  else if (id === 'grape'){
+    [[5, 5], [8, 5], [11, 5], [6, 8], [9, 8], [7, 11], [10, 11], [8, 13]].forEach(([x, y]) => { disc(x + .5, y + .5, 1.9, () => '#8a48c8'); R(x - 1, y - 1, 1, 1, '#c09af0'); });
+    R(8, 1, 1, 3, '#7a4a20'); R(9, 1, 3, 2, '#3cb048');
+  }
+  else if (id === 'melon'){ disc(8, 4, 7, (d, x, y) => y < 4 ? null : d > 6 ? '#2a8c38' : d > 5 ? '#e8f4d0' : '#ff4a5a'); [[5, 6], [8, 8], [11, 6], [7, 5], [10, 9]].forEach(([x, y]) => R(x, y, 1, 1, INK)); }
+  else if (id === 'cherry'){
+    disc(5, 11, 3, () => '#d82838'); disc(11, 11.5, 3, () => '#d82838'); R(4, 10, 1, 1, '#ff9aa0'); R(10, 10, 1, 1, '#ff9aa0');
+    R(5, 6, 1, 2, '#3c8c34'); R(6, 4, 1, 2, '#3c8c34'); R(7, 3, 2, 1, '#3c8c34'); R(9, 4, 1, 2, '#3c8c34'); R(10, 6, 1, 2, '#3c8c34'); R(9, 2, 3, 1, '#4cc048');
+  }
+  else { disc(8, 9.5, 5.5, (d, x, y) => x + y > 19 && d > 3 ? '#ff8090' : '#ffb0b8'); R(8, 5, 1, 7, '#ff8090'); R(5, 7, 2, 2, '#ffe0e4'); R(9, 2, 3, 2, '#3cb048'); }
+  return (FRUIT_CACHE[id] = outlined(c));
+}
+const RB_GC = 8, RB_GR = 4, RB_W = 152, RB_H = 80;
+// 把水果隨機放進 8×4 的格子裡
+function placeFruits(list){
+  const cells = shuffle(Array.from({ length:RB_GC * RB_GR }, (_, i) => i));
+  return list.map((k, i) => ({ k, x:cells[i] % RB_GC, y:Math.floor(cells[i] / RB_GC) }));
+}
+function makeRainbow(){
+  const qs = [];
+  // 1～3：數的順序
+  for (let i = 0; i < 3; i++){
+    const a = 1 + Math.floor(Math.random() * 46), miss = Math.floor(Math.random() * 5);
+    qs.push({ kind:'seq', nums:[a, a + 1, a + 2, a + 3, a + 4], miss, ans:a + miss, text:RB_T.seq });
+  }
+  // 4：很多水果，總共有幾個
+  const n = 10 + Math.floor(Math.random() * 20), kinds = shuffle(FRUITS.slice()).slice(0, 3 + Math.floor(Math.random() * 2));
+  qs.push({ kind:'fruit', fruits:placeFruits(Array.from({ length:n }, (_, i) => kinds[i % kinds.length].id)), ans:n, text:RB_T.all });
+  // 5～7：兩種水果，第一種、第二種、總共
+  const [f1, f2] = shuffle(FRUITS.slice()), [c1, c2] = shuffle([2, 3, 4, 5, 6, 7, 8, 9]);
+  const two = placeFruits(shuffle([...Array(c1).fill(f1.id), ...Array(c2).fill(f2.id)]));
+  const ask = f => [`${f.name[0]}有幾個？`, `${f.name[1]} ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ？`];
+  qs.push({ kind:'fruit', fruits:two, ans:c1, text:ask(f1) }, { kind:'fruit', fruits:two, ans:c2, text:ask(f2) }, { kind:'fruit', fruits:two, ans:c1 + c2, text:RB_T.all });
+  return { qs, qi:0, entry:'', wrong:0, busy:false };
+}
+function renderRainbow(){
+  const B = S.rb; if (!B) return;
+  const q = B.qs[Math.min(B.qi, B.qs.length - 1)];
+  $('rbDoors').innerHTML = RB_COLS.map((col, i) => `<div class="rdoor ${i < B.qi ? 'open' : i === B.qi ? 'now' : ''}" style="--c:${col}">
+    <span class="num">${i < B.qi ? B.qs[i].ans : i === B.qi ? (B.entry || '') : ''}</span></div>`).join('');
+  if (q.kind === 'seq'){
+    $('rbStage').innerHTML = `<div class="seqrow">${q.nums.map((n, i) => `<span class="seqbox ${i === q.miss ? 'q' : ''}">${i === q.miss ? '?' : n}</span>`).join('')}</div>`;
+  } else {
+    if (!$('rbCv')) $('rbStage').innerHTML = `<canvas id="rbCv" width="${RB_W}" height="${RB_H}" aria-label="水果"></canvas>`;
+    const g = $('rbCv').getContext('2d'); g.imageSmoothingEnabled = false;
+    P(g, 0, 0, '#fffaf0', RB_W, RB_H);
+    for (let x = 0; x < RB_GC; x++) for (let y = 0; y < RB_GR; y++) P(g, 4 + x * 18 + 1, 4 + y * 18 + 1, (x + y) % 2 ? '#fff0f4' : '#f0f8ff', 16, 16);
+    q.fruits.forEach(f => g.drawImage(fruitCanvas(f.k), 4 + f.x * 18 + 1, 4 + f.y * 18 + 1));
+  }
+}
+function rbAsk(){ const B = S.rb; setMsg(B.qs[B.qi].text, '🌈'); }
+function enterRainbow(){
+  SFX.ok();
+  Object.assign(S, { view:'rainbow', rb:makeRainbow() });
+  showView();
+  rbAsk();
+}
+function rbPress(k){
+  const B = S.rb;
+  if (!B || B.busy || B.qi >= B.qs.length) return;
+  if (k === 'c'){ B.entry = ''; SFX.blip(); renderRainbow(); return; }
+  if (k !== 'ok'){ if (B.entry.length >= 2) return; B.entry = (B.entry + k).replace(/^0+(?=\d)/, ''); SFX.key(); renderRainbow(); return; }
+  if (!B.entry) return;
+  const q = B.qs[B.qi];
+  if (+B.entry === q.ans){
+    B.busy = true; SFX.door(); setMsg(W.ok, '✅', 'ok');
+    B.qi++; B.entry = ''; renderHud(B.qi); renderRainbow();
+    setTimeout(() => {
+      B.busy = false;
+      if (B.qi < B.qs.length){ if (B.qs[B.qi].kind !== q.kind || B.qs[B.qi].fruits !== q.fruits) $('rbStage').innerHTML = ''; renderRainbow(); rbAsk(); }
+      else rainbowCleared();
+    }, 1200);
+  } else {
+    SFX.no(); B.wrong++; B.entry = ''; renderRainbow();
+    const d = $('rbDoors').querySelector('.now'); if (d){ d.classList.add('shake'); }
+    setMsg(q.kind === 'seq' ? W.lookAgain : W.countAgain, '🔍', 'no');
+    const qi = B.qi;
+    setTimeout(() => { if (S.view === 'rainbow' && B.qi === qi && !B.busy) rbAsk(); }, 1500);
+  }
+}
+$('rbKeys').addEventListener('click', e => { const b = e.target.closest('[data-rk]'); if (b){ b.blur(); rbPress(b.dataset.rk); } });
+// 彩虹島過關：從球棒、籃球、棒球手套、娃娃、手機、手提包、背包裡隨機送一樣；都送完了就送顏料
+const RAINBOW_PRIZES = ['bat', 'basketball', 'glove', 'doll', 'phone', 'handbag', 'backpack'];
+function rainbowCleared(){
+  if (!S.done.includes(5)) S.done.push(5);
+  const left = RAINBOW_PRIZES.filter(id => !S.items.includes(id));
+  const pick = left[Math.floor(Math.random() * left.length)];
+  const item = pick ? REWARDS.find(r => r[0] === pick) : null;
+  if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
+  save(); renderHud(RB_COLS.length);
+  setMsg(RB_T.done, '🌈', 'ok');
+  if (!item){ SFX.clear(); setTimeout(() => paintPanel('hand', RAINBOW_PRIZES, () => enterRainbow()), 600); return; }
+  const stars = S.rb.wrong === 0 ? 3 : S.rb.wrong <= 2 ? 2 : 1;
+  celebrate(`<div class="say">${T(RB_T.done)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
+    { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] },
+    true, () => enterRainbow(), true);
+}
+
 /* ================= 鍵盤 ================= */
 addEventListener('keydown', e => {
   if (helpOpen){ if (e.key === 'Escape') closeHelp(); return; }
@@ -3226,6 +3467,12 @@ addEventListener('keydown', e => {
     if (R0.kind === 'race'){ if (/^[1-3]$/.test(e.key)) answerTraffic(+e.key - 1); }
     else if (R0.kind === 'light'){ const b = $('trNum').querySelector(`[data-cnt="${e.key}"]`); if (b) answerLight(b); }
     else { const b = $('trNum').querySelector(R0.step === 'which' ? `[data-kind="${e.key === '1' ? 'cars' : 'scooters'}"]` : `[data-diff="${e.key}"]`); if (b && (R0.step !== 'which' || /^[12]$/.test(e.key))) answerCount(b); }
+    return;
+  }
+  if (ov.hidden && S.view === 'rainbow'){
+    if (/^[0-9]$/.test(e.key)) rbPress(e.key);
+    else if (e.key === 'Enter'){ rbPress('ok'); e.preventDefault(); }
+    else if (e.key === 'Backspace' || e.key === 'Escape') rbPress('c');
     return;
   }
   if (ov.hidden && S.view === 'clock' && /^[0-9]$/.test(e.key)){
@@ -3303,5 +3550,13 @@ $('msgSpk').innerHTML = `🔊 ${T(W.listen)}`;
 showView();
 mapLoop();
 setMsg(W.goHunt, '🗺️');
+// 在「點」後面畫出裝備箱的樣子
+(() => { const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d'); equipBox(g, 0, 0); g.clearRect(0, 0, 16, 2);
+  const im = g.getImageData(0, 0, 16, 16), a = im.data;   // 去掉草地，只留箱子
+  for (let i = 0; i < a.length; i += 4){ const y = Math.floor(i / 64); if (y < 2 || (a[i + 1] > 120 && a[i] < 140 && a[i + 2] < 90)) a[i + 3] = 0; }
+  g.putImageData(im, 0, 0);
+  $('msgSay').innerHTML = T(['出發尋寶！點', 'ㄔㄨ ㄈㄚ ㄒㄩㄣˊ ㄅㄠˇ！ㄉㄧㄢˇ']) + `<img class="msg-box" src="${c.toDataURL()}" alt="">`
+    + T(['裝備箱可以換裝', 'ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ ㄎㄜˇ ㄧˇ ㄏㄨㄢˋ ㄓㄨㄤ']);
+})();
 })();
 </script>
