@@ -180,11 +180,19 @@ div.walker{cursor:default}
 .rb-ans{flex:none;display:flex;align-items:center;justify-content:center;min-width:4.2em;height:1.9em;padding:0 10px;font-family:var(--f-px);font-size:clamp(20px,3.4vw,32px);background:#fff3b0;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);color:var(--ink)}
 .rb-ans.shake{animation:shake .3s steps(3)}
 .rb-ans.ok{background:#d4f4c8;color:#2f7a1e}
-.rb-stage{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;container-type:size}
-.seqrow{display:flex;gap:clamp(6px,1.4vw,14px)}
-.seqbox{display:flex;align-items:center;justify-content:center;width:2.4em;height:1.9em;font-family:var(--f-px);font-size:clamp(16px,min(3vw,6cqh),32px);background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink)}
-.seqbox.q{background:#fff3b0;color:var(--brick)}
-#rbCv{width:min(100cqw,190cqh);height:auto;aspect-ratio:152/80;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:6px 6px 0 rgba(0,0,0,.25)}
+.rb-stage{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:center;justify-content:center;container-type:size;overflow:hidden}
+.seqrow{display:flex;gap:clamp(8px,1.8vw,20px)}
+.seqbox{--s:clamp(56px,min(30cqh,17cqw),150px);position:relative;display:block;width:var(--s);height:calc(var(--s) * 1.1);animation:giftBob 1.6s steps(4) var(--d) infinite;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.22))}
+.seqbox:nth-child(odd){rotate:-3deg}.seqbox:nth-child(even){rotate:3deg}
+.seqbox.q{animation:giftWiggle .9s steps(4) infinite;rotate:0deg}
+.seqbox .sp{position:absolute;font-style:normal;color:#ffd23c;text-shadow:0 0 0 #1b1b2f,1px 1px 0 #1b1b2f,-1px -1px 0 #1b1b2f;font-size:calc(var(--s) * .22);animation:blink 1s steps(2) infinite}
+.seqbox .s1{left:-14%;top:20%}.seqbox .s2{right:-16%;top:2%;animation-delay:.33s}.seqbox .s3{right:-10%;bottom:6%;animation-delay:.66s}
+@keyframes giftBob{50%{transform:translateY(-6%)}}
+@keyframes giftWiggle{25%{transform:rotate(-6deg) translateY(-4%)}75%{transform:rotate(6deg) translateY(-4%)}}
+.seqbox svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.seqbox .n{position:absolute;left:50%;top:67%;translate:-50% -50%;min-width:1.7em;padding:.1em .15em;text-align:center;font-family:var(--f-px);font-size:calc(var(--s) * .3);background:#fff;border:3px solid var(--ink);border-radius:6px;box-shadow:inset 0 0 0 2px var(--gc),0 3px 0 var(--ink);color:var(--ink)}
+.seqbox.q .n{background:#fff3b0;color:var(--brick)}
+#rbCv{width:min(calc(100cqw - 16px),calc(190cqh - 30px));height:auto;aspect-ratio:152/80;background:#fff;image-rendering:pixelated;image-rendering:crisp-edges;border:8px solid;border-image:repeating-linear-gradient(45deg,#ff5a5a 0 12px,#ffd23c 12px 24px,#4cc048 24px 36px,#3c9cf0 36px 48px,#9a5ae0 48px 60px) 8;box-shadow:0 0 0 3px var(--ink),7px 7px 0 3px rgba(0,0,0,.25)}
 .rb-keys{flex:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
 .rb-keys .rk-c,.rb-keys .rk-ok{font-family:var(--f-zy);font-weight:900;font-size:clamp(14px,1.8vw,18px);white-space:nowrap}
 .rb-keys .rk-c{background:#ffe0c0}
@@ -455,7 +463,7 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
   .rb-side{width:100%;align-items:center}
   .rb-keys{grid-template-columns:repeat(4,minmax(0,1fr))}
   .rb-keys .ans{height:40px}
-  .seqbox{font-size:20px}
+  .seqbox{--s:56px}
   .clock-wrap{flex-direction:column;gap:8px}
   #clkSvg{height:min(160px,25vh);max-width:none}
   .clock-side{flex:none;width:100%}
@@ -3403,7 +3411,8 @@ function renderRainbow(){
   $('rbAns').textContent = B.entry || ' ';
   $('rbClear').innerHTML = T(RB_T.clear); $('rbOk').innerHTML = T(RB_T.ok);
   if (q.kind === 'seq'){
-    $('rbStage').innerHTML = `<div class="seqrow">${q.nums.map((n, i) => `<span class="seqbox ${i === q.miss ? 'q' : ''}">${i === q.miss ? '?' : n}</span>`).join('')}</div>`;
+    // 每個數字放在一個禮物盒裡（顏色輪流），問號那一盒的標籤是黃色
+    $('rbStage').innerHTML = `<div class="seqrow">${q.nums.map((n, i) => `<span class="seqbox ${i === q.miss ? 'q' : ''}" style="--gc:${GIFT_COLS[i]};--d:${i * .18}s">${giftSvg(GIFT_COLS[i])}<span class="n">${i === q.miss ? '?' : n}</span>${i === q.miss ? '<i class="sp s1">✦</i><i class="sp s2">✦</i><i class="sp s3">✦</i>' : ''}</span>`).join('')}</div>`;
   } else {
     if (!$('rbCv')) $('rbStage').innerHTML = `<canvas id="rbCv" width="${RB_W}" height="${RB_H}" aria-label="水果"></canvas>`;
     const g = $('rbCv').getContext('2d'); g.imageSmoothingEnabled = false;
@@ -3412,6 +3421,15 @@ function renderRainbow(){
     q.fruits.forEach(f => g.drawImage(fruitCanvas(f.k), 4 + f.x * 18 + 1, 4 + f.y * 18 + 1));
   }
 }
+const GIFT_COLS = ['#ff5a5a', '#3c9cf0', '#4cc048', '#9a5ae0', '#ff9a20'];
+const giftSvg = col => `<svg viewBox="0 0 60 66" aria-hidden="true">
+  <ellipse cx="21" cy="9" rx="9" ry="6" fill="#ffd23c" stroke="#1b1b2f" stroke-width="3"/><ellipse cx="39" cy="9" rx="9" ry="6" fill="#ffd23c" stroke="#1b1b2f" stroke-width="3"/>
+  <rect x="7" y="26" width="46" height="37" fill="${col}" stroke="#1b1b2f" stroke-width="3"/>
+  <g fill="#fff" opacity=".45"><circle cx="14" cy="33" r="2.2"/><circle cx="46" cy="33" r="2.2"/><circle cx="14" cy="56" r="2.2"/><circle cx="46" cy="56" r="2.2"/><circle cx="19" cy="44" r="1.6"/><circle cx="41" cy="44" r="1.6"/></g>
+  <rect x="26" y="27.5" width="8" height="34" fill="#ffd23c"/><rect x="27.5" y="27.5" width="2" height="34" fill="#fff3a0"/>
+  <rect x="3" y="15" width="54" height="12" fill="${shade(col, .8)}" stroke="#1b1b2f" stroke-width="3"/><rect x="26" y="16.5" width="8" height="9" fill="#ffd23c"/>
+  <circle cx="30" cy="12" r="4.5" fill="#ffd23c" stroke="#1b1b2f" stroke-width="3"/>
+  <ellipse cx="18" cy="7" rx="3" ry="1.6" fill="#fff8c8"/><ellipse cx="36" cy="7" rx="3" ry="1.6" fill="#fff8c8"/><rect x="6" y="17" width="20" height="2.5" fill="#fff" opacity=".35"/></svg>`;
 function rbAsk(){ const B = S.rb; setMsg(B.qs[B.qi].text, '🌈'); }
 function enterRainbow(){
   SFX.ok();
