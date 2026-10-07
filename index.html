@@ -148,6 +148,13 @@ div.walker{cursor:default}
   background:#4c9a3c repeating-linear-gradient(45deg,transparent 0 22px,rgba(0,0,0,.08) 22px 26px)}
 .dino-wrap{height:100%;width:100%;max-width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
 #dinoCv{flex:1 1 0;min-height:0;max-width:100%;aspect-ratio:1/1;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:inset 0 0 0 3px #b89458,6px 6px 0 rgba(0,0,0,.3);background:#e8cf98}
+#blkCv{flex:1 1 0;min-height:0;max-width:100%;aspect-ratio:4/3;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:inset 0 0 0 3px #c8a0e0,6px 6px 0 rgba(0,0,0,.3);background:#fdf6e4}
+.block-view{background:#8a6ab0 repeating-linear-gradient(45deg,transparent 0 22px,rgba(255,255,255,.08) 22px 26px)}
+.shp{display:inline-block;border:2px solid var(--ink);box-sizing:border-box}
+.shp.sq{width:16px;height:16px;background:#ff5a5a}
+.shp.re{width:26px;height:13px;background:#3c9cf0}
+.shp.ci{width:17px;height:17px;border-radius:50%;background:#ffd23c}
+.shp.tr{width:18px;height:16px;border:0;background:#4cc048;clip-path:polygon(50% 0,100% 100%,0 100%)}
 .dino-ans{flex:none;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;width:min(100%,600px)}
 .ans{font-family:var(--f-px);font-size:clamp(14px,2vw,20px);height:clamp(40px,7vh,56px);padding:0;background:#fff;color:var(--ink);border:4px solid var(--ink);box-shadow:0 4px 0 var(--ink);cursor:pointer}
 @media (hover:hover){ .ans:hover:not(:disabled){background:#fff3b0} }   /* 手機點完不會一直停在黃色 */
@@ -486,6 +493,13 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
         <div class="dino-ans tr-num" id="trNum" hidden></div>
       </div>
     </div>
+    <!-- 第 4 關：積木島（數一數形狀） -->
+    <div class="view dino-view block-view" id="blockView" hidden>
+      <div class="dino-wrap">
+        <canvas id="blkCv" width="160" height="120" aria-label="積木拼成的圖案"></canvas>
+        <div class="dino-ans tr-num" id="blkAns"></div>
+      </div>
+    </div>
     <!-- 第 2 關：恐龍島（數腳印） -->
     <div class="view dino-view" id="dinoView" hidden>
       <div class="dino-wrap">
@@ -578,6 +592,7 @@ const W = {
   isl1:['動物島', 'ㄉㄨㄥˋ ㄨˋ ㄉㄠˇ'],
   isl2:['恐龍島', 'ㄎㄨㄥˇ ㄌㄨㄥˊ ㄉㄠˇ'],
   isl3:['交通島', 'ㄐㄧㄠ ㄊㄨㄥ ㄉㄠˇ'],
+  isl4:['積木島', 'ㄐㄧ ㄇㄨˋ ㄉㄠˇ'],
   carsGo:['出發！', 'ㄔㄨ ㄈㄚ！'],
   trQ:['哪一台車開的路最短？', 'ㄋㄚˇ ㄧ ㄊㄞˊ ㄔㄜ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ ㄗㄨㄟˋ ㄉㄨㄢˇ？'],
   trQlong:['哪一台車開的路最長？', 'ㄋㄚˇ ㄧ ㄊㄞˊ ㄔㄜ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ ㄗㄨㄟˋ ㄔㄤˊ？'],
@@ -720,7 +735,7 @@ const COATS = [['#c8a064','卡其色','ㄎㄚˇ ㄑㄧˊ ㄙㄜˋ'],['#d8402c','
 const HAIR_C = [['#2a2a36','黑色','ㄏㄟ ㄙㄜˋ'],['#6a3e1e','咖啡色','ㄎㄚ ㄈㄟ ㄙㄜˋ'],['#f0c040','金色','ㄐㄧㄣ ㄙㄜˋ'],['#d84a2a','紅色','ㄏㄨㄥˊ ㄙㄜˋ'],['#3a6ad8','藍色','ㄌㄢˊ ㄙㄜˋ'],['#f08cc0','粉紅色','ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ'],['#e8e8f0','白色','ㄅㄞˊ ㄙㄜˋ']];
 const HAIRS = [['short','短髮','ㄉㄨㄢˇ ㄈㄚˇ'],['long','長髮','ㄔㄤˊ ㄈㄚˇ'],['pony','馬尾','ㄇㄚˇ ㄨㄟˇ'],['bob','妹妹頭','ㄇㄟˋ ˙ㄇㄟ ㄊㄡˊ'],['spiky','刺刺頭','ㄘˋ ㄘˋ ㄊㄡˊ'],['bun','丸子頭','ㄨㄢˊ ˙ㄗ ㄊㄡˊ']];
 const GLASSES = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['round','圓眼鏡','ㄩㄢˊ ㄧㄢˇ ㄐㄧㄥˋ'],['square','方眼鏡','ㄈㄤ ㄧㄢˇ ㄐㄧㄥˋ'],['sun','墨鏡','ㄇㄛˋ ㄐㄧㄥˋ'],['mono','單眼鏡','ㄉㄢ ㄧㄢˇ ㄐㄧㄥˋ']];
-const HATS = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['deer','偵探帽','ㄓㄣ ㄊㄢˋ ㄇㄠˋ'],['cap','棒球帽','ㄅㄤˋ ㄑㄧㄡˊ ㄇㄠˋ'],['beret','貝雷帽','ㄅㄟˋ ㄌㄟˊ ㄇㄠˋ'],['top','高帽','ㄍㄠ ㄇㄠˋ']];
+const HATS = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['deer','偵探帽','ㄓㄣ ㄊㄢˋ ㄇㄠˋ'],['cap','棒球帽','ㄅㄤˋ ㄑㄧㄡˊ ㄇㄠˋ'],['helmet','安全帽','ㄢ ㄑㄩㄢˊ ㄇㄠˋ'],['wizard','巫師帽','ㄨ ㄕ ㄇㄠˋ'],['douli','斗笠','ㄉㄡˇ ㄌㄧˋ']];
 // 破關獎勵：每過一關得到一樣，放進換裝的「寶藏箱」。[id, 國字, 注音, 穿在哪裡]
 // pet 寵物（站在小偵探旁邊）、hand 拿在右手、back 背在後面、outfit 換掉整套衣服
 // 動物島籠子裡的動物：每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救了，動物島就不能再玩
@@ -908,16 +923,22 @@ function spriteCanvas(look, only){
   } else if (look.hat === 'cap'){
     R(4, -1, 10, 3, '#d8402c'); R(5, -2, 8, 1, '#d8402c'); R(4, 1, 10, 1, '#a82a1a');
     R(12, 2, 5, 1, '#a82a1a'); R(8, -1, 1, 1, '#ffffff');
-  } else if (look.hat === 'beret'){
-    R(3, 0, 12, 2, '#8c48c8'); R(4, -1, 10, 1, '#8c48c8'); R(8, -2, 1, 1, '#6a2aa8'); R(4, 0, 3, 1, '#b07ae8'); R(3, 1, 12, 1, '#6a2aa8');
+  } else if (look.hat === 'helmet'){   // 黃色安全帽：圓圓的頂、中間一條稜、前面有帽簷
+    R(5, -3, 8, 1, '#ffd23c'); R(4, -2, 10, 1, '#ffd23c'); R(3, -1, 12, 3, '#ffd23c');
+    R(8, -3, 2, 5, '#f0b820'); R(5, -2, 2, 1, '#fff2a0'); R(2, 2, 15, 1, '#e8a820');
+  } else if (look.hat === 'wizard'){   // 紫色尖尖的巫師帽＋星星
+    for (let k = 0; k < 6; k++) R(9 - k, -5 + k, 2 * k + 1, 1, '#6a3ab8');
+    R(10, -4, 1, 4, '#4a2a8a'); R(1, 1, 17, 2, '#4a2a8a'); R(2, 1, 15, 1, '#7a4ac8');
+    R(7, -2, 1, 1, '#ffd23c'); R(10, -1, 1, 1, '#ffd23c'); R(6, 0, 1, 1, '#ffd23c');
   } else if (look.hat === 'dinohat'){
     // 恐龍帽：綠色的恐龍頭，眼睛朝右，頭上有尖刺，帽緣是一排牙齒
     R(3, -1, 12, 4, '#4cb04c'); R(4, -2, 10, 1, '#4cb04c'); R(3, 2, 13, 1, '#2c8c3c');
     R(5, -4, 2, 2, '#ffd23c'); R(8, -5, 2, 3, '#ffd23c'); R(11, -4, 2, 2, '#ffd23c');
     R(11, -1, 2, 2, '#ffffff'); R(12, -1, 1, 1, ink);
     R(11, 3, 1, 1, '#ffffff'); R(13, 3, 1, 1, '#ffffff'); R(15, 3, 1, 1, '#ffffff');
-  } else if (look.hat === 'top'){
-    R(5, -5, 8, 6, '#2a2a36'); R(5, -1, 8, 1, '#c83030'); R(3, 1, 12, 1, '#2a2a36'); R(6, -4, 1, 3, '#4a4a5a');
+  } else if (look.hat === 'douli'){   // 斗笠：寬寬扁扁的草帽
+    [[9, -3, 1], [7, -2, 5], [5, -1, 9], [3, 0, 13], [1, 1, 17], [0, 2, 19]].forEach(([x, y, w]) => R(x, y, w, 1, '#e8c870'));
+    R(0, 2, 19, 1, '#c8a050'); R(4, 0, 1, 1, '#c8a050'); R(9, -1, 1, 3, '#c8a050'); R(14, 0, 1, 1, '#c8a050'); R(6, -1, 2, 1, '#fff0b8');
   }
   // 自動描黑邊
   const d = g.getImageData(0, 0, SP_W, SP_H), a = d.data, op = i => a[i * 4 + 3] > 0, out = [];
@@ -935,7 +956,7 @@ function paint(cv, look){
   g.drawImage(spriteCanvas(look), 0, 0);
 }
 // 換裝小圖：只畫那一部分，並裁成剛好的大小 [x, y, 寬, 高]
-const PART_CROP = { hair:[0, 2, 19, 18], coat:[2, 16, 16, 9], outfit:[2, 16, 16, 9], glasses:[3, 8, 15, 10], hat:[2, 0, 17, 10], hand:[13, 8, 9, 12], back:[2, 16, 16, 9], pet:[0, 0, 18, 15], feet:[3, 20, 14, 6], ride:[0, 0, 26, 16] };
+const PART_CROP = { hair:[0, 2, 19, 18], coat:[2, 16, 16, 9], outfit:[2, 16, 16, 9], glasses:[3, 8, 15, 10], hat:[0, 0, 21, 10], hand:[13, 8, 9, 12], back:[2, 16, 16, 9], pet:[0, 0, 18, 15], feet:[3, 20, 14, 6], ride:[0, 0, 26, 16] };
 // 小動物：臉朝左（看著小偵探），外面描深色邊
 const ANIMAL_CACHE = {};
 function animalCanvas(id){
@@ -1094,7 +1115,7 @@ function renderDet(){
 }
 
 // 藏寶圖上的六個島（位置在下面的 MAP 裡，用 1～6 標出入口）。目前只有第 1 關動物島可以玩。
-const ISLANDS = [{ name:W.isl1, ready:true }, { name:W.isl2, ready:true }, { name:W.isl3, ready:true }, {}, {}, {}];
+const ISLANDS = [{ name:W.isl1, ready:true }, { name:W.isl2, ready:true }, { name:W.isl3, ready:true }, { name:W.isl4, ready:true }, {}, {}];
 // 藏寶圖的提示：走到下一個還沒過關的島
 function mapMsg(){
   const nx = ISLANDS.findIndex((isl, i) => unlocked(i) && isl.ready && !S.done.includes(i));
@@ -1115,6 +1136,12 @@ function renderHud(pop){
     const qi = S.tr ? S.tr.qi : 0;
     $('lvname').innerHTML = `<span class="tag">LV 3</span><span>${T(W.isl3)}</span><span class="info" aria-hidden="true">?</span>`;
     $('slots').innerHTML = [1, 2, 3, 4].map(i => `<div class="slot ${i <= qi ? 'got' : ''} ${pop === i ? 'pop' : ''}" title="第${i}題"><span class="ic" style="font-size:24px">🚗</span></div>`).join('');
+    return;
+  }
+  if (S.view === 'block'){
+    const qi = S.blk ? S.blk.qi : 0, order = S.blk ? S.blk.qs : BSHAPES.map(b => b.id);
+    $('lvname').innerHTML = `<span class="tag">LV 4</span><span>${T(W.isl4)}</span><span class="info" aria-hidden="true">?</span>`;
+    $('slots').innerHTML = order.map((id, i) => `<div class="slot ${i < qi ? 'got' : ''} ${pop === i + 1 ? 'pop' : ''}" title="${bShape(id).name[0]}"><span class="ic shp ${id}"></span></div>`).join('');
     return;
   }
   if (S.view === 'dino'){
@@ -1155,9 +1182,11 @@ function showView(){
   $('mapView').hidden = S.view !== 'map';
   $('islandView').hidden = S.view !== 'island';
   $('dinoView').hidden = S.view !== 'dino';
+  $('blockView').hidden = S.view !== 'block';
   $('trafficView').hidden = S.view !== 'traffic';
   if (S.view === 'map'){ renderMapBg(); renderMapLabels(); refreshMapSprite(); }
   else if (S.view === 'dino') renderDino();
+  else if (S.view === 'block') renderBlocks();
   else if (S.view === 'traffic') renderTraffic();
   else renderBuilding();
   renderDet(); renderHud();
@@ -1167,6 +1196,7 @@ function enterIsland(i){
   if (!ISLANDS[i].ready){ SFX.bump(); setMsg(W.mSoon, '🚧', 'no'); return; }
   if (i === 1){ enterDino(); return; }
   if (i === 2){ enterTraffic(); return; }
+  if (i === 3){ enterBlocks(); return; }
   SFX.ok();
   S.view = 'island';
   newRun();
@@ -1284,6 +1314,11 @@ function zoneFloor(g, ox, oy, x, y, i){
     P(g, ox + 2 + ri(x, y, 3, 10), oy + 2 + ri(x, y, 4, 4), '#aab0c8', 3, 1);
     return;
   }
+  if (i === 3){   // 積木島：彩色的地墊
+    const cols = ['#ffd0dc', '#d0e8ff', '#fff0b0', '#d4f4c8'];
+    P(g, ox, oy, cols[(x + y * 2) % 4], 16, 16); P(g, ox, oy + 15, 'rgba(0,0,0,.08)', 16, 1); P(g, ox + 15, oy, 'rgba(0,0,0,.08)', 1, 16);
+    return;
+  }
   if (i === 2){   // 交通島：灰色地磚＋白色斑馬線
     P(g, ox, oy, '#c8c8d4', 16, 16); P(g, ox, oy + 7, '#b0b0c0', 16, 1); P(g, ox + 7, oy, '#b0b0c0', 1, 16);
     if (hash(x, y, 340) < .5) for (let k = 0; k < 3; k++) P(g, ox + 2 + k * 5, oy + 10, '#ffffff', 3, 4);
@@ -1345,6 +1380,7 @@ function islandArt(z, i){
   const pal = locked ? { rim:'#c4c8dc', c1:'#6e7290', c2:'#9a9eb8', c3:'#c4c8dc' }
     : i === 1 ? { rim:'#fff4cc', c1:'#8a5a2c', c2:'#b07a40', c3:'#d8a868' }
     : i === 2 ? { rim:'#eeeef6', c1:'#4a4a5a', c2:'#6a6a7a', c3:'#9a9aaa' }
+    : i === 3 ? { rim:'#fff4fc', c1:'#5a3a7a', c2:'#7a5aa0', c3:'#b8a0d8' }
     : { rim:'#c4f490', c1:'#7a4a22', c2:'#b07a40', c3:'#ecc890' };
   const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16), 255];
   const im = g.getImageData(0, 0, CW, CH), a = im.data, edge = [];
@@ -1376,7 +1412,12 @@ function islandArt(z, i){
     P(g, ox + 4, oy + 3, '#4a4e6a', 6, 2); P(g, ox + 8, oy + 5, '#4a4e6a', 2, 3); P(g, ox + 6, oy + 8, '#4a4e6a', 2, 2); P(g, ox + 6, oy + 12, '#4a4e6a', 2, 2);
   } else {
     const dx = cx - 19, dy = cy - 9, bx = cx + 2, by = cy - 11;
-    if (i === 0){   // 紅色穀倉
+    if (i === 3){   // 疊起來的積木：長方形、正方形、三角形
+      P(g, bx + 1, by + 10, INK, 16, 7); P(g, bx + 2, by + 11, '#3c9cf0', 14, 5);
+      P(g, bx + 4, by + 2, INK, 10, 9); P(g, bx + 5, by + 3, '#ff5a5a', 8, 7);
+      for (let k = 0; k < 6; k++){ P(g, bx + 8 - k, by - 5 + k, INK, 2 * k + 3, 1); if (k) P(g, bx + 9 - k, by - 5 + k, '#4cc048', 2 * k + 1, 1); }
+      P(g, bx + 2, by + 1, INK, 15, 1);
+    } else if (i === 0){   // 紅色穀倉
       P(g, bx + 1, by + 6, INK, 14, 10); P(g, bx + 2, by + 7, '#d83c2c', 12, 9);
       for (let k = 0; k < 6; k++){ P(g, bx + 7 - k, by + k, INK, 2 + k * 2, 1); if (k) P(g, bx + 8 - k, by + k, '#a82a1a', k * 2, 1); }
       P(g, bx + 5, by + 10, '#ffffff', 6, 6); P(g, bx + 6, by + 11, '#8a2414', 4, 5); P(g, bx + 7, by + 3, '#ffffff', 2, 2);
@@ -1390,7 +1431,11 @@ function islandArt(z, i){
       P(g, bx + 6, by, '#c8c8d8', 2, 2); P(g, bx + 9, by - 2, '#c8c8d8', 2, 2); P(g, bx + 7, by - 4, '#e0e0ea', 2, 2);
     }
     g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(dx + 3, dy + 15, 13, 2);
-    if (i === 2) g.drawImage(RACE[0], dx - 4, dy + 1); else g.drawImage(animalCanvas(i === 1 ? 'dino' : 'dog'), dx, dy);
+    if (i === 3){   // 黃色的圓球
+      for (let y = -7; y <= 7; y++) for (let x = -7; x <= 7; x++){ const d = x * x + y * y; if (d <= 49) P(g, dx + 9 + x, dy + 8 + y, d > 36 ? INK : (x + y > 3 ? '#e8a820' : '#ffd23c')); }
+      P(g, dx + 6, dy + 4, '#ffffff', 2, 2);
+    }
+    else if (i === 2) g.drawImage(RACE[0], dx - 4, dy + 1); else g.drawImage(animalCanvas(i === 1 ? 'dino' : 'dog'), dx, dy);
   }
   return { c, ox:x0 * TS - PAD, oy:y0 * TS - PAD, edge, cx:x0 * TS - PAD + cx, top:y0 * TS - PAD + cy - 16 };
 }
@@ -2617,10 +2662,11 @@ const HELP_KID = [
   ['🚗', '看車子開的路，哪台最短、哪台最長', 'ㄎㄢˋ ㄔㄜ ˙ㄗ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ，ㄋㄚˇ ㄊㄞˊ ㄗㄨㄟˋ ㄉㄨㄢˇ、ㄋㄚˇ ㄊㄞˊ ㄗㄨㄟˋ ㄔㄤˊ'],
   ['🚦', '紅燈停，數一數汽車和機車', 'ㄏㄨㄥˊ ㄉㄥ ㄊㄧㄥˊ，ㄕㄨˇ ㄧ ㄕㄨˇ ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ'],
   ['🅿️', '汽車和機車，哪一種比較多', 'ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ，ㄋㄚˇ ㄧ ㄓㄨㄥˇ ㄅㄧˇ ㄐㄧㄠˋ ㄉㄨㄛ'],
+  ['🧱', '數一數積木有幾個正方形、長方形、圓形、三角形', 'ㄕㄨˇ ㄧ ㄕㄨˇ ㄐㄧ ㄇㄨˋ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ、ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ、ㄩㄢˊ ㄒㄧㄥˊ、ㄙㄢ ㄐㄧㄠˇ ㄒㄧㄥˊ'],
   ['🚨', '錯三次，警鈴會響', 'ㄘㄨㄛˋ ㄙㄢ ㄘˋ，ㄐㄧㄥˇ ㄌㄧㄥˊ ㄏㄨㄟˋ ㄒㄧㄤˇ'],
   ['🔑', '點對的鑰匙，關掉警鈴', 'ㄉㄧㄢˇ ㄉㄨㄟˋ ˙ㄉㄜ ㄧㄠˋ ˙ㄕ，ㄍㄨㄢ ㄉㄧㄠˋ ㄐㄧㄥˇ ㄌㄧㄥˊ'],
 ];
-const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點人物可以開啟裝備箱換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），最後一頁「寶藏箱」放破關得到的獎勵（帽子和眼鏡也是之後關卡的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物：狗狗、貓咪、兔子、小豬、小雞，每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救出來以後，動物島還是可以繼續玩：籠子裡改放隨機的食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾），打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進寶藏箱，在寶藏箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會汪汪叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後還是可以玩，但不再送）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車裡隨機送一樣還沒拿到的；在寶藏箱選了以後，小偵探在藏寶圖上會坐在上面。之後的關卡會得到放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
+const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點人物可以開啟裝備箱換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），最後一頁「寶藏箱」放破關得到的獎勵（帽子是積木島的獎勵，眼鏡是之後關卡的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物：狗狗、貓咪、兔子、小豬、小雞，每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救出來以後，動物島還是可以繼續玩：籠子裡改放隨機的食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾），打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進寶藏箱，在寶藏箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會汪汪叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後還是可以玩，但不再送）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車裡隨機送一樣還沒拿到的；在寶藏箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形都至少是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。四題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的。之後的關卡會得到眼鏡、放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
 const HELP_COMMON = '上方按鈕：「國字」關掉可只看注音；「👂 聽」開啟後，題目旁才會出現「🔊聽」按鈕，可用瀏覽器朗讀；「音效」開關遊戲音效；「地圖」回到藏寶圖（不會清掉進度）。偵探的造型和過關進度只存在這台裝置的瀏覽器裡。';
 let helpOpen = false;
 function openHelp(){
@@ -2638,6 +2684,160 @@ $('lvname').onclick = openHelp;
 $('helpModal').addEventListener('click', e => { if (e.target.id === 'helpModal') closeHelp(); });
 $('hintModal').addEventListener('click', e => { if (e.target.id === 'hintModal') closeHint(); });
 
+/* ================= 第 4 關：積木島（數一數形狀） ================= */
+// 用正方形、長方形、圓形、三角形拼成的圖案（六種隨機挑一種，顏色隨機、可能左右翻過來），
+// 依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，答案卡 1～8。答對時那一種形狀會發光。
+const BSHAPES = [
+  { id:'sq', name:['正方形', 'ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ'] },
+  { id:'re', name:['長方形', 'ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ'] },
+  { id:'ci', name:['圓形', 'ㄩㄢˊ ㄒㄧㄥˊ'] },
+  { id:'tr', name:['三角形', 'ㄙㄢ ㄐㄧㄠˇ ㄒㄧㄥˊ'] }
+];
+const bShape = id => BSHAPES.find(b => b.id === id);
+const blkQ = b => [`${b.name[0]}有幾個？`, `${b.name[1]} ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ？`];
+const BLK_W = 160, BLK_H = 120, BLK_GROUND = 106;
+// 圖案：[形狀, x, y, 寬, 高, 三角形的方向]（正方形寬＝高；長方形至少 2:1，才不會跟正方形搞混）
+const BLK_PICS = [
+  [   // 房子＋小樹＋太陽＋小花
+    ['tr', 40, 18, 76, 30], ['sq', 50, 48, 58, 58], ['sq', 57, 56, 15, 15], ['sq', 86, 56, 15, 15], ['re', 72, 78, 14, 28],
+    ['ci', 128, 6, 22, 22], ['tr', 6, 40, 32, 34], ['re', 18, 74, 8, 32], ['ci', 124, 94, 12, 12], ['ci', 140, 94, 12, 12]
+  ],
+  [   // 機器人
+    ['tr', 71, 2, 14, 12], ['sq', 62, 14, 32, 32], ['ci', 67, 20, 9, 9], ['ci', 80, 20, 9, 9], ['re', 70, 36, 16, 6],
+    ['sq', 56, 48, 44, 44], ['ci', 72, 56, 12, 12], ['ci', 72, 73, 12, 12],
+    ['re', 34, 51, 22, 9], ['re', 100, 51, 22, 9], ['ci', 23, 49, 12, 12], ['ci', 121, 49, 12, 12],
+    ['re', 62, 92, 10, 14], ['re', 84, 92, 10, 14]
+  ],
+  [   // 火箭＋星球
+    ['tr', 62, 4, 36, 24], ['re', 64, 28, 32, 64], ['ci', 72, 34, 16, 16], ['sq', 73, 58, 14, 14],
+    ['tr', 44, 70, 20, 22], ['tr', 96, 70, 20, 22], ['tr', 68, 92, 24, 14, 'down'],
+    ['ci', 12, 12, 20, 20], ['ci', 128, 56, 16, 16], ['ci', 20, 80, 10, 10]
+  ],
+  [   // 火車
+    ['tr', 8, 28, 44, 12], ['sq', 12, 40, 36, 36], ['sq', 21, 48, 18, 18], ['re', 48, 54, 44, 22], ['re', 60, 34, 10, 20],
+    ['ci', 56, 18, 12, 12], ['ci', 70, 6, 10, 10], ['sq', 100, 44, 32, 32], ['tr', 104, 30, 24, 14],
+    ['ci', 14, 76, 14, 14], ['ci', 32, 76, 14, 14], ['ci', 56, 76, 14, 14], ['ci', 74, 76, 14, 14], ['ci', 102, 76, 14, 14], ['ci', 118, 76, 14, 14]
+  ],
+  [   // 城堡
+    ['tr', 10, 16, 34, 24], ['tr', 116, 16, 34, 24], ['re', 14, 40, 26, 66], ['re', 120, 40, 26, 66],
+    ['sq', 50, 46, 60, 60], ['sq', 50, 34, 12, 12], ['sq', 74, 34, 12, 12], ['sq', 98, 34, 12, 12],
+    ['re', 74, 82, 12, 24], ['ci', 21, 56, 12, 12], ['ci', 127, 56, 12, 12], ['ci', 72, 56, 16, 16]
+  ],
+  [   // 汽車＋樹＋三角錐＋太陽
+    ['re', 46, 36, 56, 24], ['sq', 54, 41, 15, 15], ['sq', 79, 41, 15, 15], ['re', 24, 60, 104, 26],
+    ['ci', 32, 76, 24, 24], ['ci', 94, 76, 24, 24], ['ci', 116, 65, 8, 8], ['ci', 6, 6, 20, 20],
+    ['tr', 134, 38, 24, 30], ['re', 142, 68, 8, 38], ['tr', 4, 82, 18, 24]
+  ]
+];
+const BLK_COLS = ['#ff5a5a', '#ffb020', '#ffd23c', '#4cc048', '#3c9cf0', '#8a5ae0', '#ff7ab8', '#40c8c0'];
+function makeBlocks(){
+  const pic = BLK_PICS[Math.floor(Math.random() * BLK_PICS.length)], flip = Math.random() < .5;
+  const pieces = [];
+  pic.forEach(([t, x, y, w, h, d]) => {
+    const q = { t, x:flip ? BLK_W - x - w : x, y, w, h, d:d || 'up' };
+    // 疊在別的積木上面時，不要跟下面那塊同一個顏色（不然會看不出來）
+    const under = pieces.filter(o => q.x >= o.x && q.y >= o.y && q.x + q.w <= o.x + o.w && q.y + q.h <= o.y + o.h).map(o => o.col);
+    const cols = BLK_COLS.filter(c => !under.includes(c));
+    q.col = cols[Math.floor(Math.random() * cols.length)];
+    pieces.push(q);
+  });
+  const countOf = {}; BSHAPES.forEach(b => countOf[b.id] = pieces.filter(q => q.t === b.id).length);
+  return { pieces, countOf, qs:BSHAPES.map(b => b.id), qi:0, wrong:0, busy:false, hl:null };
+}
+// 這個像素在不在形狀裡面
+function inPiece(q, px, py){
+  if (px < q.x || py < q.y || px >= q.x + q.w || py >= q.y + q.h) return false;
+  if (q.t === 'sq' || q.t === 're') return true;
+  if (q.t === 'ci'){ const r = q.w / 2; return (px + .5 - q.x - r) ** 2 + (py + .5 - q.y - r) ** 2 <= r * r; }
+  const f = q.d === 'down' ? (q.y + q.h - py) / q.h : (py + 1 - q.y) / q.h;   // 三角形：越往底邊越寬
+  return Math.abs(px + .5 - q.x - q.w / 2) <= q.w / 2 * f;
+}
+let blkBg = null;
+function renderBlkBg(){
+  const c = document.createElement('canvas'); c.width = BLK_W; c.height = BLK_H;
+  const g = c.getContext('2d');
+  P(g, 0, 0, '#fdf6e4', BLK_W, BLK_H);
+  for (let x = 0; x < BLK_W; x += 10) P(g, x, 0, '#f0e4c8', 1, BLK_H);
+  for (let y = 0; y < BLK_H; y += 10) P(g, 0, y, '#f0e4c8', BLK_W, 1);
+  P(g, 0, BLK_GROUND, '#d8b884', BLK_W, BLK_H - BLK_GROUND); P(g, 0, BLK_GROUND, '#b8945c', BLK_W, 1);
+  blkBg = c;
+}
+function drawBlocks(){
+  if (S.view !== 'block' || !S.blk) return;
+  const cv = $('blkCv'), g = cv.getContext('2d'), B = S.blk;
+  g.imageSmoothingEnabled = false;
+  if (!blkBg) renderBlkBg();
+  g.drawImage(blkBg, 0, 0);
+  B.pieces.forEach(q => {
+    const lite = shade(q.col, 1.25), dark = shade(q.col, .75);
+    for (let py = q.y - 1; py <= q.y + q.h; py++) for (let px = q.x - 1; px <= q.x + q.w; px++){
+      if (inPiece(q, px, py)){
+        const top = !inPiece(q, px, py - 1) || !inPiece(q, px - 1, py), bot = !inPiece(q, px, py + 2) || !inPiece(q, px + 2, py);
+        P(g, px, py, top ? lite : bot ? dark : q.col);
+      } else if (inPiece(q, px - 1, py) || inPiece(q, px + 1, py) || inPiece(q, px, py - 1) || inPiece(q, px, py + 1)) P(g, px, py, INK);
+    }
+  });
+  // 答對了：那一種形狀外面亮一圈
+  if (B.hl) B.pieces.filter(q => q.t === B.hl).forEach(q => {
+    const near = (px, py, r) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (dx * dx + dy * dy <= r * r + 1 && inPiece(q, px + dx, py + dy)) return true; return false; };
+    for (let py = q.y - 5; py <= q.y + q.h + 4; py++) for (let px = q.x - 5; px <= q.x + q.w + 4; px++){
+      if (near(px, py, 1) || !near(px, py, 4)) continue;
+      P(g, px, py, near(px, py, 3) ? '#ffd000' : '#ff8a00');
+    }
+  });
+}
+function renderBlocks(){
+  blkBg = null;
+  $('blkAns').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(n => `<button class="ans" data-ans="${n}">${n}</button>`).join('');
+  drawBlocks();
+}
+function askBlocks(){
+  const B = S.blk;
+  $('blkAns').querySelectorAll('.ans').forEach(b => { b.className = 'ans'; b.disabled = false; b.blur(); });
+  setMsg(blkQ(bShape(B.qs[B.qi])), '🧱');
+}
+function enterBlocks(){
+  SFX.ok();
+  Object.assign(S, { view:'block', blk:makeBlocks() });
+  showView();
+  askBlocks();
+}
+function answerBlocks(n, btn){
+  const B = S.blk;
+  if (!B || B.busy || B.qi >= B.qs.length || btn.disabled) return;
+  const id = B.qs[B.qi];
+  if (n === B.countOf[id]){
+    B.busy = true; SFX.ok(); btn.classList.add('ok');
+    setMsg(W.ok, '✅', 'ok');
+    B.hl = id; drawBlocks();
+    B.qi++; renderHud(B.qi);
+    setTimeout(() => {
+      B.busy = false; B.hl = null; drawBlocks();
+      if (B.qi < B.qs.length) askBlocks(); else blocksCleared();
+    }, 1400);
+  } else {
+    SFX.no(); B.wrong++; btn.classList.add('no'); btn.disabled = true;
+    setMsg(W.countAgain, '🔍', 'no');
+    setTimeout(() => { if (S.view === 'block' && B.qi < B.qs.length && msgSpeech === W.countAgain[0]) setMsg(blkQ(bShape(B.qs[B.qi])), '🧱'); }, 1500);
+  }
+}
+$('blkAns').addEventListener('click', e => { const b = e.target.closest('[data-ans]'); if (b) answerBlocks(+b.dataset.ans, b); });
+// 積木島過關：從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡，隨機送一頂還沒拿到的
+const BLOCK_PRIZES = HATS.slice(1).map(h => h[0]);
+function blocksCleared(){
+  if (!S.done.includes(3)) S.done.push(3);
+  const left = BLOCK_PRIZES.filter(id => !S.items.includes(id));
+  const pick = left[Math.floor(Math.random() * left.length)];
+  const item = pick ? REWARDS.find(r => r[0] === pick) : null;
+  if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
+  save(); renderHud(BSHAPES.length);
+  setMsg(W.trDone, '🧱', 'ok');
+  const stars = S.blk.wrong === 0 ? 3 : S.blk.wrong <= 2 ? 2 : 1;
+  celebrate(`<div class="say">${T(W.trDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
+    item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
+    true, () => enterBlocks(), true);
+}
+
 /* ================= 鍵盤 ================= */
 addEventListener('keydown', e => {
   if (helpOpen){ if (e.key === 'Escape') closeHelp(); return; }
@@ -2647,6 +2847,11 @@ addEventListener('keydown', e => {
     if (R0.kind === 'race'){ if (/^[1-3]$/.test(e.key)) answerTraffic(+e.key - 1); }
     else if (R0.kind === 'light'){ const b = $('trNum').querySelector(`[data-cnt="${e.key}"]`); if (b) answerLight(b); }
     else { const b = $('trNum').querySelector(R0.step === 'which' ? `[data-kind="${e.key === '1' ? 'cars' : 'scooters'}"]` : `[data-diff="${e.key}"]`); if (b && (R0.step !== 'which' || /^[12]$/.test(e.key))) answerCount(b); }
+    return;
+  }
+  if (ov.hidden && S.view === 'block' && /^[1-8]$/.test(e.key)){
+    const b = $('blkAns').querySelector(`[data-ans="${e.key}"]`);
+    if (b) answerBlocks(+e.key, b);
     return;
   }
   if (ov.hidden && S.view === 'dino' && /^[0-9]$/.test(e.key)){
