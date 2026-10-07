@@ -1778,11 +1778,10 @@ function findPath(sx, sy, goals){
   }
   return null;
 }
-// 點地圖：點關卡區裡任何地方 → 走到區域旁邊再走進去；點照相機 → 走過去；點裝備箱 → 直接打開；點空地 → 走過去；點寵物 → 叫一聲
+// 點地圖：點關卡區裡任何地方 → 走到區域旁邊再走進去；點照相機 → 走過去；點裝備箱 → 走過去再打開；點空地 → 走過去；點寵物 → 叫一聲
 function tapWalk(t){
-  if (mtile(t.x, t.y) === 'Y'){ held = []; walkPath = null; openDress(); return; }   // 點左上角的裝備箱就打開
   if (hasDog() && t.x === pup.x && t.y === pup.y){ const a = animalById(S.look.pet); SFX.animal(a.id); setMsg(aSay(a), a.emoji); return; }
-  const z = zoneOf(t.x, t.y), isChest = mtile(t.x, t.y) === 'X';
+  const z = zoneOf(t.x, t.y), isChest = 'XY'.includes(mtile(t.x, t.y));   // 照相機、裝備箱：走過去再打開
   if (z >= 0 && (!unlocked(z) || !ISLANDS[z].ready)){ enterIsland(z); return; }   // 還沒開放：直接說明
   const goals = new Set(), into = new Map();
   if (z >= 0 || isChest){
