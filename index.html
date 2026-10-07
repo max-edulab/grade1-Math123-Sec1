@@ -93,6 +93,7 @@ body.no-hz .ru .sy b{font-size:.8em}
 .mlabel.done .no{background:var(--leaf)}
 .mlabel.locked{background:#d8d8e4;color:var(--muted)}
 .mlabel.chest{background:#fff3b0}
+.blk-ico{width:1.1em;height:1.1em;vertical-align:-.15em;display:inline-block}
 .msg-box{height:1.6em;vertical-align:middle;margin:0 4px;image-rendering:pixelated;image-rendering:crisp-edges}
 /* 關卡名字寫在區塊的格子裡 */
 .zsign{position:absolute;transform:translate(-50%,-62%);display:flex;align-items:center;gap:5px;white-space:nowrap;padding:2px 10px 2px 3px;
@@ -1906,6 +1907,8 @@ function showOv(html, cls = ''){
 }
 function hideOv(){ ov.hidden = true; ov.innerHTML = ''; ov.onclick = null; }
 
+// 積木的小圖示：疊起來的長方形、正方形、三角形（🧱 看起來像磚牆）
+const BLOCK_ICON = `<svg class="blk-ico" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="13" width="16" height="6" fill="#3c9cf0" stroke="#1b1b2f" stroke-width="1.5"/><rect x="5.5" y="6.5" width="7" height="6.5" fill="#ff5a5a" stroke="#1b1b2f" stroke-width="1.5"/><path d="M14.5 6.5 L18 13 L11 13 Z" fill="#4cc048" stroke="#1b1b2f" stroke-width="1.5" stroke-linejoin="round"/><circle cx="9" cy="3.5" r="2.6" fill="#ffd23c" stroke="#1b1b2f" stroke-width="1.5"/></svg>`;
 const DRESS_CATS = [
   ['coat', '🧥', W.coat, () => COATS.map(([, h, z], i) => [i, h, z])],
   ['hair', '💇', W.hair, () => HAIRS],
@@ -1914,7 +1917,7 @@ const DRESS_CATS = [
   ['isl', '🐾', W.isl1, () => ANIMALS.map(a => a.id)],
   ['isl', '🦕', W.isl2, () => DINO_PRIZES],
   ['isl', '🚗', W.isl3, () => TRAFFIC_PRIZES],
-  ['isl', '🧱', W.isl4, () => BLOCK_PRIZES],
+  ['isl', BLOCK_ICON, W.isl4, () => BLOCK_PRIZES],
   ['isl', '⏰', W.isl5, () => CLOCK_PRIZES],
   ['isl', '🌈', W.isl6, () => RAINBOW_PRIZES]
 ];
@@ -3009,7 +3012,7 @@ const HELP_KID = [
   ['🚗', '看車子開的路，哪台最短、哪台最長', 'ㄎㄢˋ ㄔㄜ ˙ㄗ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ，ㄋㄚˇ ㄊㄞˊ ㄗㄨㄟˋ ㄉㄨㄢˇ、ㄋㄚˇ ㄊㄞˊ ㄗㄨㄟˋ ㄔㄤˊ'],
   ['🚦', '紅燈停，數一數汽車和機車', 'ㄏㄨㄥˊ ㄉㄥ ㄊㄧㄥˊ，ㄕㄨˇ ㄧ ㄕㄨˇ ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ'],
   ['🅿️', '汽車和機車，哪一種比較多', 'ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ，ㄋㄚˇ ㄧ ㄓㄨㄥˇ ㄅㄧˇ ㄐㄧㄠˋ ㄉㄨㄛ'],
-  ['🧱', '數一數積木有幾個正方形、長方形、圓形、三角形', 'ㄕㄨˇ ㄧ ㄕㄨˇ ㄐㄧ ㄇㄨˋ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ、ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ、ㄩㄢˊ ㄒㄧㄥˊ、ㄙㄢ ㄐㄧㄠˇ ㄒㄧㄥˊ'],
+  [BLOCK_ICON, '數一數積木有幾個正方形、長方形、圓形、三角形', 'ㄕㄨˇ ㄧ ㄕㄨˇ ㄐㄧ ㄇㄨˋ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ、ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ、ㄩㄢˊ ㄒㄧㄥˊ、ㄙㄢ ㄐㄧㄠˇ ㄒㄧㄥˊ'],
   ['🌈', '數字按照順序排，數一數水果有幾個', 'ㄕㄨˋ ㄗˋ ㄢˋ ㄓㄠˋ ㄕㄨㄣˋ ㄒㄩˋ ㄆㄞˊ，ㄕㄨˇ ㄧ ㄕㄨˇ ㄕㄨㄟˇ ㄍㄨㄛˇ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ'],
   ['⏰', '看時鐘，短針、長針指在哪裡，是幾點', 'ㄎㄢˋ ㄕˊ ㄓㄨㄥ，ㄉㄨㄢˇ ㄓㄣ、ㄔㄤˊ ㄓㄣ ㄓˇ ㄗㄞˋ ㄋㄚˇ ˙ㄌㄧ，ㄕˋ ㄐㄧˇ ㄉㄧㄢˇ'],
   ['🔢', '一排積木，從前面或後面數第幾個', 'ㄧ ㄆㄞˊ ㄐㄧ ㄇㄨˋ，ㄘㄨㄥˊ ㄑㄧㄢˊ ˙ㄇㄧㄢ ㄏㄨㄛˋ ㄏㄡˋ ˙ㄇㄧㄢ ㄕㄨˇ ㄉㄧˋ ㄐㄧˇ ˙ㄍㄜ'],
@@ -3187,7 +3190,7 @@ function askBlocks(){
   else if (B.qi === 0 || !$('blkAns').querySelector('[data-ans]')) setBlkAns('num', 8);
   $('blkAns').querySelectorAll('.ans').forEach(b => { b.classList.remove('ok', 'no'); b.disabled = false; b.blur(); });
   drawBlocks();
-  setMsg(blkText(B), '🧱');
+  setMsg(blkText(B), '🎲');
 }
 function enterBlocks(){
   SFX.ok();
@@ -3214,7 +3217,7 @@ function answerBlocks(btn){
     SFX.no(); B.wrong++; btn.classList.add('no'); btn.disabled = true;
     setMsg(row && q.kind !== 'num' ? W.lookAgain : W.countAgain, '🔍', 'no');
     const qi = B.qi;
-    setTimeout(() => { if (S.view === 'block' && B.qi === qi && !B.busy) setMsg(blkText(B), '🧱'); }, 1500);
+    setTimeout(() => { if (S.view === 'block' && B.qi === qi && !B.busy) setMsg(blkText(B), '🎲'); }, 1500);
   }
 }
 $('blkAns').addEventListener('click', e => { const b = e.target.closest('[data-ans],[data-shape],[data-seq]'); if (b) answerBlocks(b); });
@@ -3227,7 +3230,7 @@ function blocksCleared(){
   const item = pick ? REWARDS.find(r => r[0] === pick) : null;
   if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
   save(); renderHud(S.blk.qs.length);
-  setMsg(W.blkDone, '🧱', 'ok');
+  setMsg(W.blkDone, '🎲', 'ok');
   if (!item){ SFX.clear(); setTimeout(() => paintPanel('hat', BLOCK_PRIZES, () => enterBlocks()), 600); return; }   // 帽子都送完了：送顏料
   const stars = S.blk.wrong === 0 ? 3 : S.blk.wrong <= 2 ? 2 : 1;
   celebrate(`<div class="say">${T(W.blkDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
