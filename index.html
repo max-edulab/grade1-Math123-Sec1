@@ -240,7 +240,9 @@ div.walker{cursor:default}
 .door .leaf .pl{width:60%;max-width:34px;height:18px;background:#0f2a12;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;gap:3px}
 .door .leaf .pl i{width:5px;height:5px;background:#ff4a4a}
 .door .leaf .dn{font-family:var(--f-px);font-size:10px;color:#fff;background:var(--ink);padding:3px 4px}
-.door.now{outline:4px solid var(--gold);outline-offset:2px;animation:glow 1s steps(2) infinite}
+.door.now{outline:4px solid var(--gold);outline-offset:2px;animation:glow 1s steps(2) infinite;z-index:2}
+.door .tapme{position:absolute;left:50%;top:56%;translate:-50% 0;z-index:3;display:flex;align-items:center;gap:2px;white-space:nowrap;font-size:14px;font-weight:900;background:#fff3b0;color:var(--ink);border:3px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:0 5px;animation:bounce 1s steps(4) infinite;pointer-events:none}
+@media (hover:hover){.door.now:hover{filter:brightness(1.12)}}
 @keyframes glow{50%{outline-color:#fff}}
 .door.open .leaf{transform:translateY(-100%)}
 /* 提示箭頭：「按這裡開始」 */
@@ -858,7 +860,7 @@ const aSay = a => [`${a.sound[0]}！`, `${a.sound[1]}！`];
 const aThanks = a => [`${a.sound[0]}，謝謝你！`, `${a.sound[1]}，ㄒㄧㄝˋ ˙ㄒㄧㄝ ㄋㄧˇ！`];
 const oneOf = a => [`${a.name[0]}一隻`, `${a.name[1]} ㄧ ㄓ`];
 const aSaved = a => [`你救了${a.name[0]}！`, `ㄋㄧˇ ㄐㄧㄡˋ ˙ㄌㄜ ${a.name[1]}！`];
-const aRescue = a => [`打開六道電子鎖，救出${a.name[0]}！`, `ㄉㄚˇ ㄎㄞ ㄌㄧㄡˋ ㄉㄠˋ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ，ㄐㄧㄡˋ ㄔㄨ ${a.name[1]}！`];
+const aRescue = a => [`點一下門，打開六道門，救出${a.name[0]}！`, `ㄉㄧㄢˇ ㄧ ˙ㄒㄧㄚˋ ㄇㄣˊ，ㄉㄚˇ ㄎㄞ ㄌㄧㄡˋ ㄉㄠˋ ㄇㄣˊ，ㄐㄧㄡˋ ㄔㄨ ${a.name[1]}！`];
 const aTrapped = a => [`有一隻${a.name[0]}被關在門後面，快救牠！`, `ㄧㄡˇ ㄧ ㄓ ${a.name[1]} ㄅㄟˋ ㄍㄨㄢ ㄗㄞˋ ㄇㄣˊ ㄏㄡˋ ˙ㄇㄧㄢ，ㄎㄨㄞˋ ㄐㄧㄡˋ ㄊㄚ！`];
 const animalsLeft = () => ANIMALS.filter(a => !S.items.includes(a.id));
 // 恐龍島的寵物：小恐龍（不會出現在動物島的籠子裡）
@@ -882,7 +884,7 @@ const DINO_COOKIES = [
   { id:'ck_ptero', name:['翼龍餅乾', 'ㄧˋ ㄌㄨㄥˊ ㄅㄧㄥˇ ㄍㄢ'],    unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' }
 ];
 const foodById = id => FOODS.find(f => f.id === id) || DINO_COOKIES.find(f => f.id === id) || FOODS[0];
-const fGet = f => [`打開六道電子鎖，拿到${f.name[0]}！`, `ㄉㄚˇ ㄎㄞ ㄌㄧㄡˋ ㄉㄠˋ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ，ㄋㄚˊ ㄉㄠˋ ${f.name[1]}！`];
+const fGet = f => [`點一下門，打開六道門，拿到${f.name[0]}！`, `ㄉㄧㄢˇ ㄧ ˙ㄒㄧㄚˋ ㄇㄣˊ，ㄉㄚˇ ㄎㄞ ㄌㄧㄡˋ ㄉㄠˋ ㄇㄣˊ，ㄋㄚˊ ㄉㄠˋ ${f.name[1]}！`];
 const fSay = f => [`好吃的${f.name[0]}！`, `ㄏㄠˇ ㄔ ˙ㄉㄜ ${f.name[1]}！`];
 const fGot = f => [`拿到${f.name[0]}了！`, `ㄋㄚˊ ㄉㄠˋ ${f.name[1]} ˙ㄌㄜ！`];
 const fUnit = f => [`${f.name[0]}${f.unit[0]}`, `${f.name[1]} ${f.unit[1]}`];
@@ -1381,7 +1383,7 @@ function renderBuilding(){
     <div class="gate ${S.cleared ? 'done' : ''}">
     <div class="nest">${DOOR_LIST.slice().reverse().map(i => `<button class="door ${i === DOORS ? 'dlast' : ''} ${i <= doors ? 'open' : ''} ${!S.cleared && i === doors + 1 ? 'now' : ''}" data-door="${i}" aria-label="${doorName(i)[0]}"
       style="inset:${(i - 1) * 12}% ${(i - 1) * 7.5}% 0;box-shadow:inset 0 0 0 4px ${shades[i - 1]}">
-      <span class="slot2"><span class="leaf"><span class="pl"><i></i><i></i></span><span class="dn">${i}</span></span></span></button>`).join('')}</div>
+      <span class="slot2"><span class="leaf"><span class="pl"><i></i><i></i></span><span class="dn">${i}</span></span></span>${!S.cleared && i === doors + 1 ? `<span class="tapme">👆 ${T(['點我', 'ㄉㄧㄢˇ ㄨㄛˇ'])}</span>` : ''}</button>`).join('')}</div>
   </div>`;
   if (S.food){ const cv = $('bldg').querySelector('.dog-cv'), g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height); g.drawImage(foodCanvas(S.food), 0, 0); }
   else paintAnimal($('bldg').querySelector('.dog-cv'), S.animal);
@@ -3005,7 +3007,7 @@ const HELP_KID = [
   ['🦴', '有時候會拿到食物，送給動物吃', 'ㄧㄡˇ ㄕˊ ˙ㄏㄡ ㄏㄨㄟˋ ㄋㄚˊ ㄉㄠˋ ㄕˊ ㄨˋ，ㄙㄨㄥˋ ㄍㄟˇ ㄉㄨㄥˋ ㄨˋ ㄔ'],
   ['👆', '點地圖，小偵探就會走過去', 'ㄉㄧㄢˇ ㄉㄧˋ ㄊㄨˊ，ㄒㄧㄠˇ ㄓㄣ ㄊㄢˋ ㄐㄧㄡˋ ㄏㄨㄟˋ ㄗㄡˇ ㄍㄨㄛˋ ㄑㄩˋ'],
   ['🗺️', '點框起來的格子，就能進關卡', 'ㄉㄧㄢˇ ㄎㄨㄤ ㄑㄧˇ ㄌㄞˊ ˙ㄉㄜ ㄍㄜˊ ˙ㄗ，ㄐㄧㄡˋ ㄋㄥˊ ㄐㄧㄣˋ ㄍㄨㄢ ㄑㄧㄚˇ'],
-  ['👇', '跟著箭頭，點門上的電子鎖', 'ㄍㄣ ˙ㄓㄜ ㄐㄧㄢˋ ㄊㄡˊ，ㄉㄧㄢˇ ㄇㄣˊ ㄕㄤˋ ˙ㄉㄜ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ'],
+  ['👆', '點一下門，打開電子鎖', 'ㄉㄧㄢˇ ㄧ ˙ㄒㄧㄚˋ ㄇㄣˊ，ㄉㄚˇ ㄎㄞ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ'],
   ['🔢', '找出加起來是10的數字，按 #', 'ㄓㄠˇ ㄔㄨ ㄐㄧㄚ ㄑㄧˇ ㄌㄞˊ ㄕˋ 10 ˙ㄉㄜ ㄕㄨˋ ㄗˋ，ㄢˋ #'],
   ['🚪', '打開六道門，就過關了', 'ㄉㄚˇ ㄎㄞ ㄌㄧㄡˋ ㄉㄠˋ ㄇㄣˊ，ㄐㄧㄡˋ ㄍㄨㄛˋ ㄍㄨㄢ ˙ㄌㄜ'],
   ['🦶', '數一數發光的東西，點答案', 'ㄕㄨˇ ㄧ ㄕㄨˇ ㄈㄚ ㄍㄨㄤ ˙ㄉㄜ ㄉㄨㄥ ˙ㄒㄧ，ㄉㄧㄢˇ ㄉㄚˊ ㄢˋ'],
