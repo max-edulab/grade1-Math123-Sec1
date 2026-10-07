@@ -149,6 +149,29 @@ div.walker{cursor:default}
 .dino-wrap{height:100%;width:100%;max-width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
 #dinoCv{flex:1 1 0;min-height:0;max-width:100%;aspect-ratio:1/1;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:inset 0 0 0 3px #b89458,6px 6px 0 rgba(0,0,0,.3);background:#e8cf98}
 #blkCv{flex:1 1 0;min-height:0;max-width:100%;aspect-ratio:4/3;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:inset 0 0 0 3px #c8a0e0,6px 6px 0 rgba(0,0,0,.3);background:#fdf6e4}
+.blk-row{flex:1 1 0;min-height:0;width:min(100%,820px);display:flex;flex-direction:column;justify-content:center;gap:8px}
+.blk-row[hidden],#blkCv[hidden]{display:none}
+.row-ends{display:flex;justify-content:space-between}
+.row-ends .end{font-family:var(--f-zy);font-weight:900;font-size:clamp(20px,3vw,28px);background:var(--paper);border:4px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:0 12px}
+#rowCv{width:100%;aspect-ratio:200/44;image-rendering:pixelated;image-rendering:crisp-edges;border:5px solid var(--ink);box-shadow:inset 0 0 0 3px #c8a0e0,6px 6px 0 rgba(0,0,0,.3);background:#fdf6e4}
+.dino-ans.n8{grid-template-columns:repeat(8,minmax(0,1fr))}
+.dino-ans.n10{grid-template-columns:repeat(10,minmax(0,1fr))}
+.dino-ans.pick4{grid-template-columns:repeat(4,minmax(0,1fr));width:min(100%,800px)}
+.dino-ans.pick3{grid-template-columns:repeat(3,minmax(0,1fr));width:min(100%,700px)}
+.ans.seq{display:flex;align-items:center;justify-content:center;gap:10px}
+.ans.seq .shp{scale:1.3}
+.ans .shp{flex:none}
+.clock-view{background:#3a8ac8 repeating-linear-gradient(45deg,transparent 0 22px,rgba(255,255,255,.08) 22px 26px)}
+.clock-wrap{height:100%;width:100%;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,32px)}
+#clkSvg{flex:none;height:100%;width:auto;aspect-ratio:1/1;max-width:46%;filter:drop-shadow(6px 6px 0 rgba(0,0,0,.3))}
+#clkSvg .nums{font-family:var(--f-px);font-size:10px;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.clock-side{flex:1 1 0;max-width:540px;display:flex;flex-direction:column;gap:12px}
+.clk-sent{background:var(--paper);border:4px solid var(--ink);box-shadow:4px 4px 0 rgba(0,0,0,.25);padding:10px 14px;font-size:clamp(20px,2.4vw,26px);font-weight:900;line-height:2.1}
+.clk-sent .hs{color:#d02828}.clk-sent .hl{color:#2c64d8}
+.blank{display:inline-flex;align-items:center;justify-content:center;min-width:2em;height:1.45em;margin:0 4px;vertical-align:middle;border:3px solid var(--ink);background:#fff;font-family:var(--f-px);font-size:.75em;color:#2f7a1e}
+.blank.now{background:#fff3b0;animation:glow 1s steps(2) infinite;outline:3px solid var(--gold);outline-offset:1px}
+.blank.done{background:#d4f4c8}
+.clk-keys{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .block-view{background:#8a6ab0 repeating-linear-gradient(45deg,transparent 0 22px,rgba(255,255,255,.08) 22px 26px)}
 .shp{display:inline-block;border:2px solid var(--ink);box-sizing:border-box}
 .shp.sq{width:16px;height:16px;background:#ff5a5a}
@@ -405,6 +428,15 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
   .dino-view{height:clamp(320px,calc(100vh - 430px),520px);padding:8px}
   .traffic-view{height:clamp(300px,calc(100vh - 430px),520px);padding:8px}
   .dino-ans{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+  .dino-ans.n10{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .clock-view{height:auto}
+  .clock-wrap{flex-direction:column;gap:8px}
+  #clkSvg{height:min(160px,25vh);max-width:none}
+  .clock-side{flex:none;width:100%}
+  .clk-sent{padding:6px 10px;line-height:1.9}
+  .dino-ans.pick4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ans.seq{gap:6px}
+  .ans.seq .shp{scale:1}
   .sign{font-size:15px;padding:2px 8px;white-space:nowrap}
   .leds{display:none}
   .cage{width:60%}
@@ -493,11 +525,25 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
         <div class="dino-ans tr-num" id="trNum" hidden></div>
       </div>
     </div>
+    <!-- 第 5 關：時鐘島（整點、半點） -->
+    <div class="view dino-view clock-view" id="clockView" hidden>
+      <div class="clock-wrap">
+        <svg id="clkSvg" viewBox="0 0 120 120" role="img" aria-label="時鐘"></svg>
+        <div class="clock-side">
+          <div class="clk-sent" id="clkSent"></div>
+          <div class="clk-keys" id="clkKeys"></div>
+        </div>
+      </div>
+    </div>
     <!-- 第 4 關：積木島（數一數形狀） -->
     <div class="view dino-view block-view" id="blockView" hidden>
       <div class="dino-wrap">
         <canvas id="blkCv" width="160" height="120" aria-label="積木拼成的圖案"></canvas>
-        <div class="dino-ans tr-num" id="blkAns"></div>
+        <div class="blk-row" id="blkRow" hidden>
+          <div class="row-ends" id="blkEnds"></div>
+          <canvas id="rowCv" width="200" height="44" aria-label="排成一排的十個積木"></canvas>
+        </div>
+        <div class="dino-ans n8" id="blkAns"></div>
       </div>
     </div>
     <!-- 第 2 關：恐龍島（數腳印） -->
@@ -593,6 +639,8 @@ const W = {
   isl2:['恐龍島', 'ㄎㄨㄥˇ ㄌㄨㄥˊ ㄉㄠˇ'],
   isl3:['交通島', 'ㄐㄧㄠ ㄊㄨㄥ ㄉㄠˇ'],
   isl4:['積木島', 'ㄐㄧ ㄇㄨˋ ㄉㄠˇ'],
+  isl5:['時鐘島', 'ㄕˊ ㄓㄨㄥ ㄉㄠˇ'],
+  blkDone:['六題都答對了！', 'ㄌㄧㄡˋ ㄊㄧˊ ㄉㄡ ㄉㄚˊ ㄉㄨㄟˋ ˙ㄌㄜ！'],
   carsGo:['出發！', 'ㄔㄨ ㄈㄚ！'],
   trQ:['哪一台車開的路最短？', 'ㄋㄚˇ ㄧ ㄊㄞˊ ㄔㄜ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ ㄗㄨㄟˋ ㄉㄨㄢˇ？'],
   trQlong:['哪一台車開的路最長？', 'ㄋㄚˇ ㄧ ㄊㄞˊ ㄔㄜ ㄎㄞ ˙ㄉㄜ ㄌㄨˋ ㄗㄨㄟˋ ㄔㄤˊ？'],
@@ -1115,7 +1163,7 @@ function renderDet(){
 }
 
 // 藏寶圖上的六個島（位置在下面的 MAP 裡，用 1～6 標出入口）。目前只有第 1 關動物島可以玩。
-const ISLANDS = [{ name:W.isl1, ready:true }, { name:W.isl2, ready:true }, { name:W.isl3, ready:true }, { name:W.isl4, ready:true }, {}, {}];
+const ISLANDS = [{ name:W.isl1, ready:true }, { name:W.isl2, ready:true }, { name:W.isl3, ready:true }, { name:W.isl4, ready:true }, { name:W.isl5, ready:true }, {}];
 // 藏寶圖的提示：走到下一個還沒過關的島
 function mapMsg(){
   const nx = ISLANDS.findIndex((isl, i) => unlocked(i) && isl.ready && !S.done.includes(i));
@@ -1138,10 +1186,17 @@ function renderHud(pop){
     $('slots').innerHTML = [1, 2, 3, 4].map(i => `<div class="slot ${i <= qi ? 'got' : ''} ${pop === i ? 'pop' : ''}" title="第${i}題"><span class="ic" style="font-size:24px">🚗</span></div>`).join('');
     return;
   }
+  if (S.view === 'clock'){
+    const ci = S.clk ? S.clk.ci : 0;
+    $('lvname').innerHTML = `<span class="tag">LV 5</span><span>${T(W.isl5)}</span><span class="info" aria-hidden="true">?</span>`;
+    $('slots').innerHTML = [1, 2, 3, 4].map(i => `<div class="slot ${i <= ci ? 'got' : ''} ${pop === i ? 'pop' : ''}" title="第${i}個時鐘"><span class="ic" style="font-size:22px">⏰</span></div>`).join('');
+    return;
+  }
   if (S.view === 'block'){
     const qi = S.blk ? S.blk.qi : 0, order = S.blk ? S.blk.qs : BSHAPES.map(b => b.id);
     $('lvname').innerHTML = `<span class="tag">LV 4</span><span>${T(W.isl4)}</span><span class="info" aria-hidden="true">?</span>`;
-    $('slots').innerHTML = order.map((id, i) => `<div class="slot ${i < qi ? 'got' : ''} ${pop === i + 1 ? 'pop' : ''}" title="${bShape(id).name[0]}"><span class="ic shp ${id}"></span></div>`).join('');
+    const all = order.length < 6 ? [...order, 'row', 'row'] : order;
+    $('slots').innerHTML = all.map((id, i) => `<div class="slot ${i < qi ? 'got' : ''} ${pop === i + 1 ? 'pop' : ''}" title="${id === 'row' ? '第幾個' : bShape(id).name[0]}">${id === 'row' ? '<span class="ic" style="font-size:20px">🔢</span>' : `<span class="ic shp ${id}"></span>`}</div>`).join('');
     return;
   }
   if (S.view === 'dino'){
@@ -1183,10 +1238,12 @@ function showView(){
   $('islandView').hidden = S.view !== 'island';
   $('dinoView').hidden = S.view !== 'dino';
   $('blockView').hidden = S.view !== 'block';
+  $('clockView').hidden = S.view !== 'clock';
   $('trafficView').hidden = S.view !== 'traffic';
   if (S.view === 'map'){ renderMapBg(); renderMapLabels(); refreshMapSprite(); }
   else if (S.view === 'dino') renderDino();
   else if (S.view === 'block') renderBlocks();
+  else if (S.view === 'clock') renderClock();
   else if (S.view === 'traffic') renderTraffic();
   else renderBuilding();
   renderDet(); renderHud();
@@ -1197,6 +1254,7 @@ function enterIsland(i){
   if (i === 1){ enterDino(); return; }
   if (i === 2){ enterTraffic(); return; }
   if (i === 3){ enterBlocks(); return; }
+  if (i === 4){ enterClock(); return; }
   SFX.ok();
   S.view = 'island';
   newRun();
@@ -1314,6 +1372,11 @@ function zoneFloor(g, ox, oy, x, y, i){
     P(g, ox + 2 + ri(x, y, 3, 10), oy + 2 + ri(x, y, 4, 4), '#aab0c8', 3, 1);
     return;
   }
+  if (i === 4){   // 時鐘島：淺藍色地磚＋小齒輪
+    P(g, ox, oy, '#cfe6ff', 16, 16); P(g, ox, oy + 15, '#b0d0f0', 16, 1); P(g, ox + 15, oy, '#b0d0f0', 1, 16);
+    if (hash(x, y, 350) < .4){ const gx = ox + 4 + ri(x, y, 351, 6), gy = oy + 4 + ri(x, y, 352, 6); P(g, gx, gy - 1, '#8ab0d8', 3, 5); P(g, gx - 1, gy, '#8ab0d8', 5, 3); P(g, gx + 1, gy + 1, '#cfe6ff'); }
+    return;
+  }
   if (i === 3){   // 積木島：彩色的地墊
     const cols = ['#ffd0dc', '#d0e8ff', '#fff0b0', '#d4f4c8'];
     P(g, ox, oy, cols[(x + y * 2) % 4], 16, 16); P(g, ox, oy + 15, 'rgba(0,0,0,.08)', 16, 1); P(g, ox + 15, oy, 'rgba(0,0,0,.08)', 1, 16);
@@ -1381,6 +1444,7 @@ function islandArt(z, i){
     : i === 1 ? { rim:'#fff4cc', c1:'#8a5a2c', c2:'#b07a40', c3:'#d8a868' }
     : i === 2 ? { rim:'#eeeef6', c1:'#4a4a5a', c2:'#6a6a7a', c3:'#9a9aaa' }
     : i === 3 ? { rim:'#fff4fc', c1:'#5a3a7a', c2:'#7a5aa0', c3:'#b8a0d8' }
+    : i === 4 ? { rim:'#f0f8ff', c1:'#2a5a8a', c2:'#4a7ab0', c3:'#9ac0e8' }
     : { rim:'#c4f490', c1:'#7a4a22', c2:'#b07a40', c3:'#ecc890' };
   const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16), 255];
   const im = g.getImageData(0, 0, CW, CH), a = im.data, edge = [];
@@ -1412,7 +1476,12 @@ function islandArt(z, i){
     P(g, ox + 4, oy + 3, '#4a4e6a', 6, 2); P(g, ox + 8, oy + 5, '#4a4e6a', 2, 3); P(g, ox + 6, oy + 8, '#4a4e6a', 2, 2); P(g, ox + 6, oy + 12, '#4a4e6a', 2, 2);
   } else {
     const dx = cx - 19, dy = cy - 9, bx = cx + 2, by = cy - 11;
-    if (i === 3){   // 疊起來的積木：長方形、正方形、三角形
+    if (i === 4){   // 鐘塔
+      P(g, bx + 3, by, INK, 11, 17); P(g, bx + 4, by + 1, '#d8a868', 9, 15); P(g, bx + 4, by + 1, '#ecc890', 2, 15);
+      for (let k = 0; k < 5; k++){ P(g, bx + 7 - k, by - 5 + k, INK, 2 * k + 3, 1); if (k) P(g, bx + 8 - k, by - 5 + k, '#3c64c8', 2 * k + 1, 1); }
+      P(g, bx + 5, by + 2, INK, 7, 7); P(g, bx + 6, by + 3, '#ffffff', 5, 5); P(g, bx + 8, by + 3, INK, 1, 3); P(g, bx + 8, by + 5, INK, 2, 1);
+      P(g, bx + 7, by + 12, INK, 3, 4);
+    } else if (i === 3){   // 疊起來的積木：長方形、正方形、三角形
       P(g, bx + 1, by + 10, INK, 16, 7); P(g, bx + 2, by + 11, '#3c9cf0', 14, 5);
       P(g, bx + 4, by + 2, INK, 10, 9); P(g, bx + 5, by + 3, '#ff5a5a', 8, 7);
       for (let k = 0; k < 6; k++){ P(g, bx + 8 - k, by - 5 + k, INK, 2 * k + 3, 1); if (k) P(g, bx + 9 - k, by - 5 + k, '#4cc048', 2 * k + 1, 1); }
@@ -1431,7 +1500,12 @@ function islandArt(z, i){
       P(g, bx + 6, by, '#c8c8d8', 2, 2); P(g, bx + 9, by - 2, '#c8c8d8', 2, 2); P(g, bx + 7, by - 4, '#e0e0ea', 2, 2);
     }
     g.fillStyle = 'rgba(0,0,0,.22)'; g.fillRect(dx + 3, dy + 15, 13, 2);
-    if (i === 3){   // 黃色的圓球
+    if (i === 4){   // 紅色鬧鐘
+      P(g, dx + 3, dy, INK, 4, 4); P(g, dx + 4, dy + 1, '#ffd23c', 2, 2); P(g, dx + 12, dy, INK, 4, 4); P(g, dx + 13, dy + 1, '#ffd23c', 2, 2);
+      for (let y = -7; y <= 7; y++) for (let x = -7; x <= 7; x++){ const d = x * x + y * y; if (d <= 49) P(g, dx + 9 + x, dy + 9 + y, d > 38 ? INK : d > 20 ? '#e83838' : '#ffffff'); }
+      P(g, dx + 9, dy + 6, INK, 1, 4); P(g, dx + 9, dy + 9, INK, 3, 1); P(g, dx + 4, dy + 16, INK, 2, 2); P(g, dx + 13, dy + 16, INK, 2, 2);
+    }
+    else if (i === 3){   // 黃色的圓球
       for (let y = -7; y <= 7; y++) for (let x = -7; x <= 7; x++){ const d = x * x + y * y; if (d <= 49) P(g, dx + 9 + x, dy + 8 + y, d > 36 ? INK : (x + y > 3 ? '#e8a820' : '#ffd23c')); }
       P(g, dx + 6, dy + 4, '#ffffff', 2, 2);
     }
@@ -2663,10 +2737,12 @@ const HELP_KID = [
   ['🚦', '紅燈停，數一數汽車和機車', 'ㄏㄨㄥˊ ㄉㄥ ㄊㄧㄥˊ，ㄕㄨˇ ㄧ ㄕㄨˇ ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ'],
   ['🅿️', '汽車和機車，哪一種比較多', 'ㄑㄧˋ ㄔㄜ ㄏㄜˊ ㄐㄧ ㄔㄜ，ㄋㄚˇ ㄧ ㄓㄨㄥˇ ㄅㄧˇ ㄐㄧㄠˋ ㄉㄨㄛ'],
   ['🧱', '數一數積木有幾個正方形、長方形、圓形、三角形', 'ㄕㄨˇ ㄧ ㄕㄨˇ ㄐㄧ ㄇㄨˋ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ、ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ、ㄩㄢˊ ㄒㄧㄥˊ、ㄙㄢ ㄐㄧㄠˇ ㄒㄧㄥˊ'],
+  ['⏰', '看時鐘，短針、長針指在哪裡，是幾點', 'ㄎㄢˋ ㄕˊ ㄓㄨㄥ，ㄉㄨㄢˇ ㄓㄣ、ㄔㄤˊ ㄓㄣ ㄓˇ ㄗㄞˋ ㄋㄚˇ ˙ㄌㄧ，ㄕˋ ㄐㄧˇ ㄉㄧㄢˇ'],
+  ['🔢', '一排積木，從前面或後面數第幾個', 'ㄧ ㄆㄞˊ ㄐㄧ ㄇㄨˋ，ㄘㄨㄥˊ ㄑㄧㄢˊ ˙ㄇㄧㄢ ㄏㄨㄛˋ ㄏㄡˋ ˙ㄇㄧㄢ ㄕㄨˇ ㄉㄧˋ ㄐㄧˇ ˙ㄍㄜ'],
   ['🚨', '錯三次，警鈴會響', 'ㄘㄨㄛˋ ㄙㄢ ㄘˋ，ㄐㄧㄥˇ ㄌㄧㄥˊ ㄏㄨㄟˋ ㄒㄧㄤˇ'],
   ['🔑', '點對的鑰匙，關掉警鈴', 'ㄉㄧㄢˇ ㄉㄨㄟˋ ˙ㄉㄜ ㄧㄠˋ ˙ㄕ，ㄍㄨㄢ ㄉㄧㄠˋ ㄐㄧㄥˇ ㄌㄧㄥˊ'],
 ];
-const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點人物可以開啟裝備箱換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），最後一頁「寶藏箱」放破關得到的獎勵（帽子是積木島的獎勵，眼鏡是之後關卡的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物：狗狗、貓咪、兔子、小豬、小雞，每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救出來以後，動物島還是可以繼續玩：籠子裡改放隨機的食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾），打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進寶藏箱，在寶藏箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會汪汪叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後還是可以玩，但不再送）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車裡隨機送一樣還沒拿到的；在寶藏箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形都至少是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。四題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的。之後的關卡會得到眼鏡、放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
+const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點人物可以開啟裝備箱換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），最後一頁「寶藏箱」放破關得到的獎勵（帽子是積木島的獎勵，眼鏡是時鐘島的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物：狗狗、貓咪、兔子、小豬、小雞，每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救出來以後，動物島還是可以繼續玩：籠子裡改放隨機的食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾），打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進寶藏箱，在寶藏箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會汪汪叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後還是可以玩，但不再送）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車裡隨機送一樣還沒拿到的；在寶藏箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，積木之間不會疊在一起，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形都至少是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。接著是排順序：十個積木橫排成一列，左邊寫「前」、右邊寫「後」，從十種問法（從前面／後面數來第幾個是什麼形狀、最前面／最後面是什麼形狀、前面／後面三個是什麼形狀、前面／後面三個有幾個某種形狀、某個形狀從前面／後面數來是第幾個）裡挑兩種問，一題從前面、一題從後面。六題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的。第 5 關「時鐘島」練習認識整點和半點：一次四個時鐘（兩個整點、兩個半點），短針是紅色、長針是藍色，右邊有一句話要一格一格填數字（點 1～12）：整點是「短針指在（ ），長針指在（ ），是（ ）點」，半點是「短針指在（ ）和（ ）之間，長針指在（ ），是（ ）點半」（「和」前後兩格可以對調）。四個時鐘都填對就過關，從圓眼鏡、方眼鏡、墨鏡、單眼鏡裡隨機送一副還沒拿到的。之後的關卡會得到放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
 const HELP_COMMON = '上方按鈕：「國字」關掉可只看注音；「👂 聽」開啟後，題目旁才會出現「🔊聽」按鈕，可用瀏覽器朗讀；「音效」開關遊戲音效；「地圖」回到藏寶圖（不會清掉進度）。偵探的造型和過關進度只存在這台裝置的瀏覽器裡。';
 let helpOpen = false;
 function openHelp(){
@@ -2684,9 +2760,10 @@ $('lvname').onclick = openHelp;
 $('helpModal').addEventListener('click', e => { if (e.target.id === 'helpModal') closeHelp(); });
 $('hintModal').addEventListener('click', e => { if (e.target.id === 'hintModal') closeHint(); });
 
-/* ================= 第 4 關：積木島（數一數形狀） ================= */
-// 用正方形、長方形、圓形、三角形拼成的圖案（六種隨機挑一種，顏色隨機、可能左右翻過來），
-// 依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，答案卡 1～8。答對時那一種形狀會發光。
+/* ================= 第 4 關：積木島（數一數形狀、排第幾個） ================= */
+// 第一題：用正方形、長方形、圓形、三角形拼成的圖案（六種隨機挑一種，積木不會疊在一起，顏色隨機、可能左右翻過來），
+//         依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，答案卡 1～8。答對時那一種形狀會發光。
+// 第二題：十個積木橫排成一列，左邊是「前」、右邊是「後」，從十種問法裡挑兩種問（一種從前面、一種從後面）。
 const BSHAPES = [
   { id:'sq', name:['正方形', 'ㄓㄥˋ ㄈㄤ ㄒㄧㄥˊ'] },
   { id:'re', name:['長方形', 'ㄔㄤˊ ㄈㄤ ㄒㄧㄥˊ'] },
@@ -2695,55 +2772,97 @@ const BSHAPES = [
 ];
 const bShape = id => BSHAPES.find(b => b.id === id);
 const blkQ = b => [`${b.name[0]}有幾個？`, `${b.name[1]} ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ？`];
-const BLK_W = 160, BLK_H = 120, BLK_GROUND = 106;
+const BLK_W = 160, BLK_H = 120, BLK_GROUND = 106, BLK_ROWQ = 2;
 // 圖案：[形狀, x, y, 寬, 高, 三角形的方向]（正方形寬＝高；長方形至少 2:1，才不會跟正方形搞混）
+// 積木之間至少空一格，不會疊在一起
 const BLK_PICS = [
-  [   // 房子＋小樹＋太陽＋小花
-    ['tr', 40, 18, 76, 30], ['sq', 50, 48, 58, 58], ['sq', 57, 56, 15, 15], ['sq', 86, 56, 15, 15], ['re', 72, 78, 14, 28],
-    ['ci', 128, 6, 22, 22], ['tr', 6, 40, 32, 34], ['re', 18, 74, 8, 32], ['ci', 124, 94, 12, 12], ['ci', 140, 94, 12, 12]
+  [   // 房子＋小樹＋太陽＋雲＋兩個方塊
+    ['tr', 40, 20, 80, 28], ['sq', 52, 49, 56, 56], ['ci', 132, 4, 20, 20], ['ci', 36, 4, 14, 14], ['ci', 51, 4, 14, 14],
+    ['tr', 6, 38, 30, 32], ['re', 17, 71, 8, 35], ['sq', 116, 80, 26, 26], ['sq', 123, 67, 12, 12]
   ],
   [   // 機器人
-    ['tr', 71, 2, 14, 12], ['sq', 62, 14, 32, 32], ['ci', 67, 20, 9, 9], ['ci', 80, 20, 9, 9], ['re', 70, 36, 16, 6],
-    ['sq', 56, 48, 44, 44], ['ci', 72, 56, 12, 12], ['ci', 72, 73, 12, 12],
-    ['re', 34, 51, 22, 9], ['re', 100, 51, 22, 9], ['ci', 23, 49, 12, 12], ['ci', 121, 49, 12, 12],
-    ['re', 62, 92, 10, 14], ['re', 84, 92, 10, 14]
+    ['tr', 72, 2, 16, 10], ['sq', 64, 13, 32, 32], ['ci', 52, 22, 11, 11], ['ci', 97, 22, 11, 11],
+    ['sq', 58, 46, 44, 44], ['re', 34, 48, 23, 10], ['re', 103, 48, 23, 10], ['ci', 21, 47, 12, 12], ['ci', 127, 47, 12, 12],
+    ['re', 66, 91, 7, 15], ['re', 87, 91, 7, 15]
   ],
-  [   // 火箭＋星球
-    ['tr', 62, 4, 36, 24], ['re', 64, 28, 32, 64], ['ci', 72, 34, 16, 16], ['sq', 73, 58, 14, 14],
-    ['tr', 44, 70, 20, 22], ['tr', 96, 70, 20, 22], ['tr', 68, 92, 24, 14, 'down'],
-    ['ci', 12, 12, 20, 20], ['ci', 128, 56, 16, 16], ['ci', 20, 80, 10, 10]
+  [   // 火箭＋星球＋星星
+    ['tr', 62, 4, 36, 24], ['re', 64, 29, 32, 64], ['tr', 45, 71, 18, 22], ['tr', 97, 71, 18, 22], ['tr', 68, 94, 24, 12, 'down'],
+    ['ci', 12, 12, 20, 20], ['ci', 128, 52, 16, 16], ['ci', 20, 78, 10, 10],
+    ['sq', 130, 14, 8, 8], ['sq', 36, 40, 7, 7], ['sq', 140, 86, 8, 8]
   ],
   [   // 火車
-    ['tr', 8, 28, 44, 12], ['sq', 12, 40, 36, 36], ['sq', 21, 48, 18, 18], ['re', 48, 54, 44, 22], ['re', 60, 34, 10, 20],
-    ['ci', 56, 18, 12, 12], ['ci', 70, 6, 10, 10], ['sq', 100, 44, 32, 32], ['tr', 104, 30, 24, 14],
-    ['ci', 14, 76, 14, 14], ['ci', 32, 76, 14, 14], ['ci', 56, 76, 14, 14], ['ci', 74, 76, 14, 14], ['ci', 102, 76, 14, 14], ['ci', 118, 76, 14, 14]
+    ['tr', 10, 29, 42, 12], ['sq', 14, 42, 34, 34], ['re', 49, 54, 42, 21], ['re', 60, 33, 10, 20],
+    ['ci', 58, 17, 14, 14], ['ci', 73, 4, 11, 11], ['sq', 93, 42, 34, 34], ['tr', 98, 29, 24, 12],
+    ['ci', 16, 77, 14, 14], ['ci', 32, 77, 14, 14], ['ci', 55, 77, 14, 14], ['ci', 73, 77, 14, 14], ['ci', 95, 77, 14, 14], ['ci', 111, 77, 14, 14],
+    ['re', 8, 92, 140, 5]
   ],
-  [   // 城堡
-    ['tr', 10, 16, 34, 24], ['tr', 116, 16, 34, 24], ['re', 14, 40, 26, 66], ['re', 120, 40, 26, 66],
-    ['sq', 50, 46, 60, 60], ['sq', 50, 34, 12, 12], ['sq', 74, 34, 12, 12], ['sq', 98, 34, 12, 12],
-    ['re', 74, 82, 12, 24], ['ci', 21, 56, 12, 12], ['ci', 127, 56, 12, 12], ['ci', 72, 56, 16, 16]
+  [   // 城堡＋太陽
+    ['tr', 10, 15, 34, 24], ['tr', 116, 15, 34, 24], ['re', 14, 40, 26, 66], ['re', 120, 40, 26, 66],
+    ['sq', 47, 47, 59, 59], ['sq', 47, 34, 12, 12], ['sq', 70, 34, 12, 12], ['sq', 94, 34, 12, 12], ['ci', 66, 4, 20, 20]
   ],
-  [   // 汽車＋樹＋三角錐＋太陽
-    ['re', 46, 36, 56, 24], ['sq', 54, 41, 15, 15], ['sq', 79, 41, 15, 15], ['re', 24, 60, 104, 26],
-    ['ci', 32, 76, 24, 24], ['ci', 94, 76, 24, 24], ['ci', 116, 65, 8, 8], ['ci', 6, 6, 20, 20],
-    ['tr', 134, 38, 24, 30], ['re', 142, 68, 8, 38], ['tr', 4, 82, 18, 24]
+  [   // 汽車＋行李＋樹＋三角錐＋太陽
+    ['sq', 58, 24, 11, 11], ['sq', 72, 24, 11, 11], ['re', 46, 36, 56, 24], ['re', 24, 61, 104, 24],
+    ['ci', 34, 86, 20, 20], ['ci', 94, 86, 20, 20], ['ci', 6, 6, 20, 20],
+    ['tr', 134, 38, 24, 30], ['re', 142, 69, 8, 37], ['tr', 4, 82, 18, 24]
   ]
 ];
 const BLK_COLS = ['#ff5a5a', '#ffb020', '#ffd23c', '#4cc048', '#3c9cf0', '#8a5ae0', '#ff7ab8', '#40c8c0'];
-function makeBlocks(){
-  const pic = BLK_PICS[Math.floor(Math.random() * BLK_PICS.length)], flip = Math.random() < .5;
-  const pieces = [];
-  pic.forEach(([t, x, y, w, h, d]) => {
-    const q = { t, x:flip ? BLK_W - x - w : x, y, w, h, d:d || 'up' };
-    // 疊在別的積木上面時，不要跟下面那塊同一個顏色（不然會看不出來）
-    const under = pieces.filter(o => q.x >= o.x && q.y >= o.y && q.x + q.w <= o.x + o.w && q.y + q.h <= o.y + o.h).map(o => o.col);
-    const cols = BLK_COLS.filter(c => !under.includes(c));
-    q.col = cols[Math.floor(Math.random() * cols.length)];
-    pieces.push(q);
-  });
-  const countOf = {}; BSHAPES.forEach(b => countOf[b.id] = pieces.filter(q => q.t === b.id).length);
-  return { pieces, countOf, qs:BSHAPES.map(b => b.id), qi:0, wrong:0, busy:false, hl:null };
+const pickOne = a => a[Math.floor(Math.random() * a.length)];
+// 第二題的一排積木：十個，四種形狀都有，其中剛好一種只有一個（才能問「○○是第幾個」）
+const ROW_N = 10, ROW_W = 200, ROW_H = 44, ROW_GROUND = 40;
+function makeRow(){
+  const kinds = shuffle(BSHAPES.map(b => b.id));
+  const a = 2 + Math.floor(Math.random() * 4), b = 2 + Math.floor(Math.random() * (9 - a - 3)), counts = [1, a, b, 9 - a - b];
+  return shuffle(kinds.flatMap((k, i) => Array(counts[i]).fill(k)));
 }
+// 形狀的名字（給問題用）
+const sN = id => bShape(id).name;
+const FRONT = ['前面', 'ㄑㄧㄢˊ ˙ㄇㄧㄢ'], BACK = ['後面', 'ㄏㄡˋ ˙ㄇㄧㄢ'];
+// 十種問法：前面／後面各五種。kind：shape 選形狀、seq 選三個一組、num 選數字
+const ROW_QS = [
+  [   // 從前面（後面）數來第幾個是什麼形狀？
+    (R, s) => { const n = 2 + Math.floor(Math.random() * 8), i = s === FRONT ? n - 1 : ROW_N - n;
+      return { text:[`從${s[0]}數來第${n}個是什麼形狀？`, `ㄘㄨㄥˊ ${s[1]} ㄕㄨˇ ㄌㄞˊ ㄉㄧˋ ${n} ˙ㄍㄜ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄒㄧㄥˊ ㄓㄨㄤˋ？`], kind:'shape', ans:R[i], hl:[i] }; }
+  ],
+  [   // 最前面（最後面）的是什麼形狀？
+    (R, s) => { const i = s === FRONT ? 0 : ROW_N - 1;
+      return { text:[`最${s[0]}的是什麼形狀？`, `ㄗㄨㄟˋ ${s[1]} ˙ㄉㄜ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄒㄧㄥˊ ㄓㄨㄤˋ？`], kind:'shape', ans:R[i], hl:[i] }; }
+  ],
+  [   // 前面（後面）三個是什麼形狀？
+    (R, s) => { const idx = s === FRONT ? [0, 1, 2] : [7, 8, 9], right = idx.map(i => R[i]);
+      const key = q => q.join(','), opts = [right], add = q => { if (!opts.some(o => key(o) === key(q))) opts.push(q); };
+      [right.slice().reverse(), (s === FRONT ? [7, 8, 9] : [0, 1, 2]).map(i => R[i]), [3, 4, 5].map(i => R[i]), [4, 5, 6].map(i => R[i])].forEach(add);
+      while (opts.length < 3) add([0, 1, 2].map(() => pickOne(BSHAPES).id));
+      const three = shuffle([right, ...shuffle(opts.slice(1)).slice(0, 2)]);
+      return { text:[`${s[0]}三個是什麼形狀？`, `${s[1]} ㄙㄢ ˙ㄍㄜ ㄕˋ ㄕㄣˊ ˙ㄇㄜ ㄒㄧㄥˊ ㄓㄨㄤˋ？`], kind:'seq', opts:three, ans:three.indexOf(right), hl:idx }; }
+  ],
+  [   // 前面（後面）三個有幾個○○？
+    (R, s) => { const idx = s === FRONT ? [0, 1, 2] : [7, 8, 9], id = R[pickOne(idx)], hit = idx.filter(i => R[i] === id);
+      return { text:[`${s[0]}三個有幾個${sN(id)[0]}？`, `${s[1]} ㄙㄢ ˙ㄍㄜ ㄧㄡˇ ㄐㄧˇ ˙ㄍㄜ ${sN(id)[1]}？`], kind:'num', max:3, ans:hit.length, hl:hit }; }
+  ],
+  [   // ○○從前面（後面）數來是第幾個？（只有一個的那種形狀）
+    (R, s) => { const id = BSHAPES.map(b => b.id).find(k => R.filter(x => x === k).length === 1), i = R.indexOf(id);
+      return { text:[`${sN(id)[0]}從${s[0]}數來是第幾個？`, `${sN(id)[1]} ㄘㄨㄥˊ ${s[1]} ㄕㄨˇ ㄌㄞˊ ㄕˋ ㄉㄧˋ ㄐㄧˇ ˙ㄍㄜ？`], kind:'num', max:10, ans:s === FRONT ? i + 1 : ROW_N - i, hl:[i] }; }
+  ]
+];
+// 挑兩種不同的問法：一題從前面、一題從後面（順序隨機）
+function makeRowQs(R){
+  const [g1, g2] = shuffle(ROW_QS.slice()).slice(0, 2), sides = shuffle([FRONT, BACK]);
+  return [g1[0](R, sides[0]), g2[0](R, sides[1])];
+}
+function makeBlocks(){
+  const pic = pickOne(BLK_PICS), flip = Math.random() < .5;
+  const pieces = pic.map(([t, x, y, w, h, d]) => ({ t, x:flip ? BLK_W - x - w : x, y, w, h, d:d || 'up', col:pickOne(BLK_COLS) }));
+  const countOf = {}; BSHAPES.forEach(b => countOf[b.id] = pieces.filter(q => q.t === b.id).length);
+  const row = makeRow();
+  const rowPieces = row.map((t, i) => {
+    const cx = 10 + i * 20, sz = { sq:[14, 14], re:[18, 9], ci:[15, 15], tr:[16, 15] }[t];
+    return { t, x:Math.round(cx - sz[0] / 2), y:ROW_GROUND - sz[1], w:sz[0], h:sz[1], d:'up', col:pickOne(BLK_COLS) };
+  });
+  return { pieces, countOf, row, rowPieces, rowQs:makeRowQs(row), qs:[...BSHAPES.map(b => b.id), 'row', 'row'], qi:0, wrong:0, busy:false, hl:null };
+}
+const blkStage = B => B.qi < BSHAPES.length ? 'count' : 'row';
+const rowQ = B => B.rowQs[Math.min(B.qi - BSHAPES.length, BLK_ROWQ - 1)];
 // 這個像素在不在形狀裡面
 function inPiece(q, px, py){
   if (px < q.x || py < q.y || px >= q.x + q.w || py >= q.y + q.h) return false;
@@ -2752,49 +2871,71 @@ function inPiece(q, px, py){
   const f = q.d === 'down' ? (q.y + q.h - py) / q.h : (py + 1 - q.y) / q.h;   // 三角形：越往底邊越寬
   return Math.abs(px + .5 - q.x - q.w / 2) <= q.w / 2 * f;
 }
-let blkBg = null;
+function drawPiece(g, q){
+  const lite = shade(q.col, 1.25), dark = shade(q.col, .75);
+  for (let py = q.y - 1; py <= q.y + q.h; py++) for (let px = q.x - 1; px <= q.x + q.w; px++){
+    if (inPiece(q, px, py)){
+      const top = !inPiece(q, px, py - 1) || !inPiece(q, px - 1, py), bot = !inPiece(q, px, py + 2) || !inPiece(q, px + 2, py);
+      P(g, px, py, top ? lite : bot ? dark : q.col);
+    } else if (inPiece(q, px - 1, py) || inPiece(q, px + 1, py) || inPiece(q, px, py - 1) || inPiece(q, px, py + 1)) P(g, px, py, INK);
+  }
+}
+// 答對了：形狀外面亮一圈
+function glowPiece(g, q, r = 4){
+  const near = (px, py, k) => { for (let dy = -k; dy <= k; dy++) for (let dx = -k; dx <= k; dx++) if (dx * dx + dy * dy <= k * k + 1 && inPiece(q, px + dx, py + dy)) return true; return false; };
+  for (let py = q.y - r - 1; py <= q.y + q.h + r; py++) for (let px = q.x - r - 1; px <= q.x + q.w + r; px++){
+    if (near(px, py, 1) || !near(px, py, r)) continue;
+    P(g, px, py, near(px, py, r - 1) ? '#ffd000' : '#ff8a00');
+  }
+}
+let blkBg = null, rowBg = null;
 function renderBlkBg(){
-  const c = document.createElement('canvas'); c.width = BLK_W; c.height = BLK_H;
-  const g = c.getContext('2d');
-  P(g, 0, 0, '#fdf6e4', BLK_W, BLK_H);
-  for (let x = 0; x < BLK_W; x += 10) P(g, x, 0, '#f0e4c8', 1, BLK_H);
-  for (let y = 0; y < BLK_H; y += 10) P(g, 0, y, '#f0e4c8', BLK_W, 1);
-  P(g, 0, BLK_GROUND, '#d8b884', BLK_W, BLK_H - BLK_GROUND); P(g, 0, BLK_GROUND, '#b8945c', BLK_W, 1);
-  blkBg = c;
+  const paper = (w, h, ground) => {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    P(g, 0, 0, '#fdf6e4', w, h);
+    for (let x = 0; x < w; x += 10) P(g, x, 0, '#f0e4c8', 1, h);
+    for (let y = 0; y < h; y += 10) P(g, 0, y, '#f0e4c8', w, 1);
+    P(g, 0, ground, '#d8b884', w, h - ground); P(g, 0, ground, '#b8945c', w, 1);
+    return c;
+  };
+  blkBg = paper(BLK_W, BLK_H, BLK_GROUND);
+  rowBg = paper(ROW_W, ROW_H, ROW_GROUND);
 }
 function drawBlocks(){
   if (S.view !== 'block' || !S.blk) return;
-  const cv = $('blkCv'), g = cv.getContext('2d'), B = S.blk;
-  g.imageSmoothingEnabled = false;
+  const B = S.blk, row = blkStage(B) === 'row';
+  $('blkCv').hidden = row; $('blkRow').hidden = !row;
   if (!blkBg) renderBlkBg();
-  g.drawImage(blkBg, 0, 0);
-  B.pieces.forEach(q => {
-    const lite = shade(q.col, 1.25), dark = shade(q.col, .75);
-    for (let py = q.y - 1; py <= q.y + q.h; py++) for (let px = q.x - 1; px <= q.x + q.w; px++){
-      if (inPiece(q, px, py)){
-        const top = !inPiece(q, px, py - 1) || !inPiece(q, px - 1, py), bot = !inPiece(q, px, py + 2) || !inPiece(q, px + 2, py);
-        P(g, px, py, top ? lite : bot ? dark : q.col);
-      } else if (inPiece(q, px - 1, py) || inPiece(q, px + 1, py) || inPiece(q, px, py - 1) || inPiece(q, px, py + 1)) P(g, px, py, INK);
-    }
-  });
-  // 答對了：那一種形狀外面亮一圈
-  if (B.hl) B.pieces.filter(q => q.t === B.hl).forEach(q => {
-    const near = (px, py, r) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (dx * dx + dy * dy <= r * r + 1 && inPiece(q, px + dx, py + dy)) return true; return false; };
-    for (let py = q.y - 5; py <= q.y + q.h + 4; py++) for (let px = q.x - 5; px <= q.x + q.w + 4; px++){
-      if (near(px, py, 1) || !near(px, py, 4)) continue;
-      P(g, px, py, near(px, py, 3) ? '#ffd000' : '#ff8a00');
-    }
-  });
+  const cv = row ? $('rowCv') : $('blkCv'), g = cv.getContext('2d');
+  g.imageSmoothingEnabled = false;
+  g.drawImage(row ? rowBg : blkBg, 0, 0);
+  const pieces = row ? B.rowPieces : B.pieces;
+  if (B.hl) (row ? B.hl.map(i => pieces[i]) : pieces.filter(q => q.t === B.hl)).forEach(q => glowPiece(g, q, row ? 3 : 4));
+  pieces.forEach(q => drawPiece(g, q));
 }
+const shpIcon = id => `<span class="shp ${id}"></span>`;
 function renderBlocks(){
   blkBg = null;
-  $('blkAns').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8].map(n => `<button class="ans" data-ans="${n}">${n}</button>`).join('');
+  $('blkEnds').innerHTML = `<span class="end">⬅ ${T(['前', 'ㄑㄧㄢˊ'])}</span><span class="end">${T(['後', 'ㄏㄡˋ'])} ➡</span>`;
   drawBlocks();
 }
+// 依照題目換下面的答案卡：數字（1～8、1～3、1～10）、四種形狀、三個一組
+function setBlkAns(kind, n){
+  const box = $('blkAns');
+  box.className = `dino-ans ${kind === 'shape' ? 'pick4' : kind === 'seq' || n === 3 ? 'pick3' : n > 8 ? 'n10' : 'n8'}`;
+  box.innerHTML = kind === 'shape' ? BSHAPES.map(b => `<button class="ans trpick" data-shape="${b.id}" aria-label="${b.name[0]}">${shpIcon(b.id)}${T(b.name)}</button>`).join('')
+    : kind === 'seq' ? rowQ(S.blk).opts.map((o, i) => `<button class="ans seq" data-seq="${i}" aria-label="${o.map(id => sN(id)[0]).join('、')}">${o.map(shpIcon).join('')}</button>`).join('')
+    : Array.from({ length:n }, (_, i) => `<button class="ans" data-ans="${i + 1}">${i + 1}</button>`).join('');
+}
+const blkText = B => blkStage(B) === 'row' ? rowQ(B).text : blkQ(bShape(B.qs[B.qi]));
 function askBlocks(){
   const B = S.blk;
-  $('blkAns').querySelectorAll('.ans').forEach(b => { b.className = 'ans'; b.disabled = false; b.blur(); });
-  setMsg(blkQ(bShape(B.qs[B.qi])), '🧱');
+  if (blkStage(B) === 'row'){ const q = rowQ(B); setBlkAns(q.kind, q.max); }
+  else if (B.qi === 0 || !$('blkAns').querySelector('[data-ans]')) setBlkAns('num', 8);
+  $('blkAns').querySelectorAll('.ans').forEach(b => { b.classList.remove('ok', 'no'); b.disabled = false; b.blur(); });
+  drawBlocks();
+  setMsg(blkText(B), '🧱');
 }
 function enterBlocks(){
   SFX.ok();
@@ -2802,26 +2943,29 @@ function enterBlocks(){
   showView();
   askBlocks();
 }
-function answerBlocks(n, btn){
+function answerBlocks(btn){
   const B = S.blk;
   if (!B || B.busy || B.qi >= B.qs.length || btn.disabled) return;
-  const id = B.qs[B.qi];
-  if (n === B.countOf[id]){
+  const row = blkStage(B) === 'row', q = row ? rowQ(B) : null;
+  const right = !row ? +btn.dataset.ans === B.countOf[B.qs[B.qi]]
+    : q.kind === 'shape' ? btn.dataset.shape === q.ans : q.kind === 'seq' ? +btn.dataset.seq === q.ans : +btn.dataset.ans === q.ans;
+  if (right){
     B.busy = true; SFX.ok(); btn.classList.add('ok');
     setMsg(W.ok, '✅', 'ok');
-    B.hl = id; drawBlocks();
+    B.hl = row ? q.hl : B.qs[B.qi]; drawBlocks();
     B.qi++; renderHud(B.qi);
     setTimeout(() => {
-      B.busy = false; B.hl = null; drawBlocks();
-      if (B.qi < B.qs.length) askBlocks(); else blocksCleared();
-    }, 1400);
+      B.busy = false; B.hl = null;
+      if (B.qi < B.qs.length) askBlocks(); else { drawBlocks(); blocksCleared(); }
+    }, 1500);
   } else {
     SFX.no(); B.wrong++; btn.classList.add('no'); btn.disabled = true;
-    setMsg(W.countAgain, '🔍', 'no');
-    setTimeout(() => { if (S.view === 'block' && B.qi < B.qs.length && msgSpeech === W.countAgain[0]) setMsg(blkQ(bShape(B.qs[B.qi])), '🧱'); }, 1500);
+    setMsg(row && q.kind !== 'num' ? W.lookAgain : W.countAgain, '🔍', 'no');
+    const qi = B.qi;
+    setTimeout(() => { if (S.view === 'block' && B.qi === qi && !B.busy) setMsg(blkText(B), '🧱'); }, 1500);
   }
 }
-$('blkAns').addEventListener('click', e => { const b = e.target.closest('[data-ans]'); if (b) answerBlocks(+b.dataset.ans, b); });
+$('blkAns').addEventListener('click', e => { const b = e.target.closest('[data-ans],[data-shape],[data-seq]'); if (b) answerBlocks(b); });
 // 積木島過關：從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡，隨機送一頂還沒拿到的
 const BLOCK_PRIZES = HATS.slice(1).map(h => h[0]);
 function blocksCleared(){
@@ -2830,12 +2974,100 @@ function blocksCleared(){
   const pick = left[Math.floor(Math.random() * left.length)];
   const item = pick ? REWARDS.find(r => r[0] === pick) : null;
   if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
-  save(); renderHud(BSHAPES.length);
-  setMsg(W.trDone, '🧱', 'ok');
+  save(); renderHud(S.blk.qs.length);
+  setMsg(W.blkDone, '🧱', 'ok');
   const stars = S.blk.wrong === 0 ? 3 : S.blk.wrong <= 2 ? 2 : 1;
-  celebrate(`<div class="say">${T(W.trDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
+  celebrate(`<div class="say">${T(W.blkDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
     item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
     true, () => enterBlocks(), true);
+}
+
+/* ================= 第 5 關：時鐘島（認識整點、半點） ================= */
+// 一次四個時鐘（兩個整點、兩個半點，順序隨機）。右邊一句話有空格，一格一格用 1～12 的數字卡填：
+//   整點：短針指在（ ），長針指在（ ），是（ ）點。
+//   半點：短針指在（ ）和（ ）之間，長針指在（ ），是（ ）點半。
+// 四個時鐘都填對就過關。
+const CLK_Q = 4;
+const CLK_T = {
+  short:['短針', 'ㄉㄨㄢˇ ㄓㄣ'], long:['長針', 'ㄔㄤˊ ㄓㄣ'], at:['指在', 'ㄓˇ ㄗㄞˋ'], and:['和', 'ㄏㄜˊ'], between:['之間，', 'ㄓ ㄐㄧㄢ，'],
+  comma:['，', '，'], is:['，是', '，ㄕˋ'], oclock:['點。', 'ㄉㄧㄢˇ。'], half:['點半。', 'ㄉㄧㄢˇ ㄅㄢˋ。'],
+  ask:['看時鐘，填填看！', 'ㄎㄢˋ ㄕˊ ㄓㄨㄥ，ㄊㄧㄢˊ ㄊㄧㄢˊ ㄎㄢˋ！'],
+  done:['四個時鐘都答對了！', 'ㄙˋ ˙ㄍㄜ ㄕˊ ㄓㄨㄥ ㄉㄡ ㄉㄚˊ ㄉㄨㄟˋ ˙ㄌㄜ！']
+};
+function makeClocks(){
+  const hours = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]).slice(0, CLK_Q);
+  const halves = shuffle([false, false, true, true]);
+  return { list:hours.map((h, i) => ({ h, half:halves[i] })), ci:0, bi:0, filled:[], wrong:0, busy:false };
+}
+// 每一格的正確答案（半點的「和」前後兩格，順序可以對調）
+const clkBlanks = c => c.half ? [[c.h, c.h % 12 + 1], [c.h, c.h % 12 + 1], [6], [c.h]] : [[c.h], [12], [c.h]];
+function clockSvg(c){
+  const cx = 60, cy = 60, ang = deg => (deg - 90) * Math.PI / 180;
+  const nums = Array.from({ length:12 }, (_, i) => { const n = i + 1, a = ang(n * 30);
+    return `<text x="${(cx + Math.cos(a) * 38).toFixed(1)}" y="${(cy + Math.sin(a) * 38 + .5).toFixed(1)}">${n}</text>`; }).join('');
+  const ticks = Array.from({ length:60 }, (_, i) => { const a = ang(i * 6), r0 = i % 5 ? 46 : 44;
+    return `<line x1="${(cx + Math.cos(a) * r0).toFixed(1)}" y1="${(cy + Math.sin(a) * r0).toFixed(1)}" x2="${(cx + Math.cos(a) * 48).toFixed(1)}" y2="${(cy + Math.sin(a) * 48).toFixed(1)}" stroke-width="${i % 5 ? 1 : 2}"/>`; }).join('');
+  const hand = (deg, len, w, col) => { const a = ang(deg), x = (cx + Math.cos(a) * len).toFixed(1), y = (cy + Math.sin(a) * len).toFixed(1);
+    return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#1b1b2f" stroke-width="${w + 3}" stroke-linecap="square"/><line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${col}" stroke-width="${w}" stroke-linecap="square"/>`; };
+  return `<circle cx="60" cy="60" r="57" fill="#1b1b2f"/><circle cx="60" cy="60" r="54" fill="#ffd23c"/><circle cx="60" cy="60" r="50" fill="#1b1b2f"/><circle cx="60" cy="60" r="48.5" fill="#fffdf4"/>
+    <g stroke="#1b1b2f">${ticks}</g><g class="nums">${nums}</g>
+    ${hand(c.half ? (c.h % 12 + .5) * 30 : c.h * 30, 24, 6, '#e83838')}${hand(c.half ? 180 : 0, 38, 4, '#2c64d8')}
+    <circle cx="60" cy="60" r="4.5" fill="#1b1b2f"/><circle cx="60" cy="60" r="2" fill="#ffd23c"/>`;
+}
+function renderClock(){
+  const K = S.clk; if (!K) return;
+  const c = K.list[Math.min(K.ci, CLK_Q - 1)];
+  $('clkSvg').innerHTML = clockSvg(c);
+  const blank = i => `<span class="blank ${i < K.bi ? 'done' : i === K.bi ? 'now' : ''}">${i < K.bi ? K.filled[i] : ''}</span>`;
+  const t = k => T(CLK_T[k]), sh = `<span class="hs">${t('short')}</span>`, lo = `<span class="hl">${t('long')}</span>`;
+  $('clkSent').innerHTML = c.half
+    ? `${sh}${t('at')}${blank(0)}${t('and')}${blank(1)}${t('between')}${lo}${t('at')}${blank(2)}${t('is')}${blank(3)}${t('half')}`
+    : `${sh}${t('at')}${blank(0)}${t('comma')}${lo}${t('at')}${blank(1)}${t('is')}${blank(2)}${t('oclock')}`;
+  $('clkKeys').innerHTML = Array.from({ length:12 }, (_, i) => `<button class="ans" data-clk="${i + 1}">${i + 1}</button>`).join('');
+}
+function enterClock(){
+  SFX.ok();
+  Object.assign(S, { view:'clock', clk:makeClocks() });
+  showView();
+  setMsg(CLK_T.ask, '⏰');
+}
+function answerClock(btn){
+  const K = S.clk;
+  if (!K || K.busy || K.ci >= CLK_Q || btn.disabled) return;
+  const c = K.list[K.ci], ok = clkBlanks(c)[K.bi], n = +btn.dataset.clk;
+  // 「和」後面那一格：不能跟前一格填一樣的
+  const right = ok.includes(n) && !(c.half && K.bi === 1 && n === K.filled[0]);
+  if (right){
+    SFX.key(); K.filled[K.bi] = n; K.bi++;
+    if (K.bi < clkBlanks(c).length){ renderClock(); setMsg(CLK_T.ask, '⏰'); return; }
+    K.busy = true; renderClock(); SFX.ok(); setMsg(W.ok, '✅', 'ok');
+    $('clkKeys').querySelectorAll('.ans').forEach(b => b.disabled = true);
+    K.ci++; renderHud(K.ci);
+    setTimeout(() => {
+      K.busy = false; K.bi = 0; K.filled = [];
+      if (K.ci < CLK_Q){ renderClock(); setMsg(CLK_T.ask, '⏰'); } else clockCleared();
+    }, 1400);
+  } else {
+    SFX.no(); K.wrong++; btn.classList.add('no'); btn.disabled = true;
+    setMsg(W.lookAgain, '🔍', 'no');
+    setTimeout(() => { if (S.view === 'clock' && !K.busy && msgSpeech === W.lookAgain[0]) setMsg(CLK_T.ask, '⏰'); }, 1500);
+  }
+}
+$('clkKeys').addEventListener('click', e => { const b = e.target.closest('[data-clk]'); if (b){ b.blur(); answerClock(b); } });
+// 時鐘島過關：從眼鏡裡隨機送一副還沒拿到的
+const CLOCK_PRIZES = GLASSES.slice(1).map(g => g[0]);
+function clockCleared(){
+  if (!S.done.includes(4)) S.done.push(4);
+  const left = CLOCK_PRIZES.filter(id => !S.items.includes(id));
+  const pick = left[Math.floor(Math.random() * left.length)];
+  const item = pick ? REWARDS.find(r => r[0] === pick) : null;
+  if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
+  save(); renderHud(CLK_Q);
+  setMsg(CLK_T.done, '⏰', 'ok');
+  const stars = S.clk.wrong === 0 ? 3 : S.clk.wrong <= 2 ? 2 : 1;
+  celebrate(`<div class="say">${T(CLK_T.done)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
+    item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
+    true, () => enterClock(), true);
 }
 
 /* ================= 鍵盤 ================= */
@@ -2849,9 +3081,14 @@ addEventListener('keydown', e => {
     else { const b = $('trNum').querySelector(R0.step === 'which' ? `[data-kind="${e.key === '1' ? 'cars' : 'scooters'}"]` : `[data-diff="${e.key}"]`); if (b && (R0.step !== 'which' || /^[12]$/.test(e.key))) answerCount(b); }
     return;
   }
-  if (ov.hidden && S.view === 'block' && /^[1-8]$/.test(e.key)){
-    const b = $('blkAns').querySelector(`[data-ans="${e.key}"]`);
-    if (b) answerBlocks(+e.key, b);
+  if (ov.hidden && S.view === 'clock' && /^[0-9]$/.test(e.key)){
+    const b = $('clkKeys').querySelector(`[data-clk="${e.key === '0' ? 10 : e.key}"]`);
+    if (b) answerClock(b);
+    return;
+  }
+  if (ov.hidden && S.view === 'block' && /^[0-9]$/.test(e.key)){
+    const b = $('blkAns').querySelector(`[data-ans="${e.key === '0' ? 10 : e.key}"]`);
+    if (b) answerBlocks(b);
     return;
   }
   if (ov.hidden && S.view === 'dino' && /^[0-9]$/.test(e.key)){
