@@ -167,6 +167,7 @@ div.walker{cursor:default}
 #clkSvg .nums{font-family:var(--f-px);font-size:10px;fill:var(--ink);text-anchor:middle;dominant-baseline:central}
 .clock-side{flex:1 1 0;max-width:540px;display:flex;flex-direction:column;gap:12px}
 .clk-sent{background:var(--paper);border:4px solid var(--ink);box-shadow:4px 4px 0 rgba(0,0,0,.25);padding:10px 14px;font-size:clamp(20px,2.4vw,26px);font-weight:900;line-height:2.1}
+.clk-sent .cl.past{opacity:.55;font-size:.85em}
 .clk-sent .hs{color:#d02828}.clk-sent .hl{color:#2c64d8}
 .blank{display:inline-flex;align-items:center;justify-content:center;min-width:2em;height:1.45em;margin:0 4px;vertical-align:middle;border:3px solid var(--ink);background:#fff;font-family:var(--f-px);font-size:.75em;color:#2f7a1e}
 .blank.now{background:#fff3b0;animation:glow 1s steps(2) infinite;outline:3px solid var(--gold);outline-offset:1px}
@@ -305,6 +306,7 @@ a.btn{text-decoration:none;display:inline-block}
 .feed-ask{font-size:clamp(20px,3vw,26px);font-weight:900;color:var(--brick)}
 .feed-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .feed-pet{display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;border:4px solid var(--ink);box-shadow:0 3px 0 var(--ink);padding:4px 4px 2px;cursor:pointer;font-family:var(--f-zy);font-size:14px;font-weight:700;color:var(--ink)}
+.swatch{width:52px;height:52px;border:4px solid var(--ink);box-shadow:0 3px 0 var(--ink);cursor:pointer}
 .feed-pet canvas{width:64px;height:54px;padding:3px;image-rendering:pixelated;image-rendering:crisp-edges;background:#cfe6ff}
 @media (hover:hover){.feed-pet:hover{background:#fff3b0}}
 .love-stage{position:relative;width:min(440px,74vw,calc((100vh - 300px) * 4 / 3));aspect-ratio:4/3;border:4px solid var(--ink);box-shadow:6px 6px 0 rgba(0,0,0,.3);overflow:hidden}
@@ -572,7 +574,7 @@ body.alarm::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:n
   </div>
 
   <div class="msgbar" id="msgbar" aria-live="polite">
-    <span class="pic" id="msgPic">🕵️</span>
+    <span class="pic" id="msgPic" style="display:none"></span>
     <div class="say" id="msgSay"></div>
     <button class="spk" id="msgSpk"></button>
   </div>
@@ -633,7 +635,7 @@ const W = {
   mapWord:['藏寶圖', 'ㄘㄤˊ ㄅㄠˇ ㄊㄨˊ'],
   mapHome:['冒險島地圖', 'ㄇㄠˋ ㄒㄧㄢˇ ㄉㄠˇ ㄉㄧˋ ㄊㄨˊ'],
   gameName:['冒險島', 'ㄇㄠˋ ㄒㄧㄢˇ ㄉㄠˇ'],
-  goHunt:['出發尋寶！點人物可以打開裝備箱', 'ㄔㄨ ㄈㄚ ㄒㄩㄣˊ ㄅㄠˇ！ㄉㄧㄢˇ ㄖㄣˊ ㄨˋ ㄎㄜˇ ㄧˇ ㄉㄚˇ ㄎㄞ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ'],
+  goHunt:['出發尋寶！點裝備箱可以換裝', 'ㄔㄨ ㄈㄚ ㄒㄩㄣˊ ㄅㄠˇ！ㄉㄧㄢˇ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ ㄎㄜˇ ㄧˇ ㄏㄨㄢˋ ㄓㄨㄤ'],
   treasure:['寶藏', 'ㄅㄠˇ ㄘㄤˊ'],
   isl1:['動物島', 'ㄉㄨㄥˋ ㄨˋ ㄉㄠˇ'],
   isl2:['恐龍島', 'ㄎㄨㄥˇ ㄌㄨㄥˊ ㄉㄠˇ'],
@@ -687,12 +689,14 @@ const W = {
   thanks:['謝謝你！', 'ㄒㄧㄝˋ ˙ㄒㄧㄝ ㄋㄧˇ！'],
   prize:['破關獎勵', 'ㄆㄛˋ ㄍㄨㄢ ㄐㄧㄤˇ ㄌㄧˋ'],
   giveWho:['要送給誰呢？', 'ㄧㄠˋ ㄙㄨㄥˋ ㄍㄟˇ ㄕㄟˊ ˙ㄋㄜ？'],
+  paintGot:['顏料一罐', 'ㄧㄢˊ ㄌㄧㄠˋ ㄧ ㄍㄨㄢˋ'],
+  paintCol:['選一個顏色！', 'ㄒㄩㄢˇ ㄧ ˙ㄍㄜ ㄧㄢˊ ㄙㄜˋ！'],
   mAllSaved:['動物島的動物都救出來了！', 'ㄉㄨㄥˋ ㄨˋ ㄉㄠˇ ˙ㄉㄜ ㄉㄨㄥˋ ㄨˋ ㄉㄡ ㄐㄧㄡˋ ㄔㄨ ㄌㄞˊ ˙ㄌㄜ！'],
   mDog:['有一隻狗狗被關在門後面，快救牠！', 'ㄧㄡˇ ㄧ ㄓ ㄍㄡˇ ˙ㄍㄡ ㄅㄟˋ ㄍㄨㄢ ㄗㄞˋ ㄇㄣˊ ㄏㄡˋ ˙ㄇㄧㄢ，ㄎㄨㄞˋ ㄐㄧㄡˋ ㄊㄚ！'],
   intoBoxPet:['放進裝備箱了，點小偵探就能帶牠出門！', 'ㄈㄤˋ ㄐㄧㄣˋ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ ˙ㄌㄜ，ㄉㄧㄢˇ ㄒㄧㄠˇ ㄓㄣ ㄊㄢˋ ㄐㄧㄡˋ ㄋㄥˊ ㄉㄞˋ ㄊㄚ ㄔㄨ ㄇㄣˊ！'],
   boxHint:['破關就能得到獎勵！', 'ㄆㄛˋ ㄍㄨㄢ ㄐㄧㄡˋ ㄋㄥˊ ㄉㄜˊ ㄉㄠˋ ㄐㄧㄤˇ ㄌㄧˋ！'],
   intoBox:['放進裝備箱了，點小偵探就能換上！', 'ㄈㄤˋ ㄐㄧㄣˋ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ ˙ㄌㄜ，ㄉㄧㄢˇ ㄒㄧㄠˇ ㄓㄣ ㄊㄢˋ ㄐㄧㄡˋ ㄋㄥˊ ㄏㄨㄢˋ ㄕㄤˋ！'],
-  mNice:['點選人物，開啟裝備箱', 'ㄉㄧㄢˇ ㄒㄩㄢˇ ㄖㄣˊ ㄨˋ，ㄎㄞ ㄑㄧˇ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ'],
+  mNice:['點左上角的裝備箱，可以換裝', 'ㄉㄧㄢˇ ㄗㄨㄛˇ ㄕㄤˋ ㄐㄧㄠˇ ˙ㄉㄜ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ，ㄎㄜˇ ㄧˇ ㄏㄨㄢˋ ㄓㄨㄤ'],
   ask:['找出加起來是10的數字，再按 # 開門！', 'ㄓㄠˇ ㄔㄨ ㄐㄧㄚ ㄑㄧˇ ㄌㄞˊ ㄕˋ 10 ˙ㄉㄜ ㄕㄨˋ ㄗˋ，ㄗㄞˋ ㄢˋ # ㄎㄞ ㄇㄣˊ！'],
   ok:['答對了！', 'ㄉㄚˊ ㄉㄨㄟˋ ˙ㄌㄜ！'],
   wrong:['不對喔，再想一想！', 'ㄅㄨˊ ㄉㄨㄟˋ ˙ㄛ，ㄗㄞˋ ㄒㄧㄤˇ ㄧ ㄒㄧㄤˇ！'],
@@ -740,6 +744,9 @@ const SFX = {
     else if (id === 'rabbit'){ beep(300, .08, 'square', .05, 0, 700); beep(300, .08, 'square', .05, .14, 700); }
     else if (id === 'pig'){ beep(190, .14, 'sawtooth', .05, 0, 140); beep(190, .14, 'sawtooth', .05, .18, 140); }
     else if (id === 'chick'){ beep(1600, .06, 'square', .04, 0, 2100); beep(1600, .06, 'square', .04, .12, 2100); }
+    else if (id === 'duck'){ beep(520, .1, 'sawtooth', .05, 0, 420); beep(520, .1, 'sawtooth', .05, .16, 420); }
+    else if (id === 'guinea'){ [0, .1, .2].forEach(t => beep(2000, .05, 'square', .035, t, 2400)); }
+    else if (id === 'bear'){ beep(130, .25, 'sawtooth', .07, 0, 220); beep(220, .3, 'sawtooth', .06, .25, 110); }
     else if (id === 'dino'){ beep(160, .35, 'sawtooth', .07, 0, 90); beep(220, .3, 'sawtooth', .05, .05, 110); }
     else SFX.woof();
   },
@@ -786,13 +793,16 @@ const GLASSES = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['round','圓眼鏡','ㄩ
 const HATS = [['none','不戴','ㄅㄨˊ ㄉㄞˋ'],['deer','偵探帽','ㄓㄣ ㄊㄢˋ ㄇㄠˋ'],['cap','棒球帽','ㄅㄤˋ ㄑㄧㄡˊ ㄇㄠˋ'],['helmet','安全帽','ㄢ ㄑㄩㄢˊ ㄇㄠˋ'],['wizard','巫師帽','ㄨ ㄕ ㄇㄠˋ'],['douli','斗笠','ㄉㄡˇ ㄌㄧˋ']];
 // 破關獎勵：每過一關得到一樣，放進裝備箱裡那個島的分類。[id, 國字, 注音, 穿在哪裡]
 // pet 寵物（站在小偵探旁邊）、hand 拿在右手、back 背在後面、outfit 換掉整套衣服
-// 動物島籠子裡的動物：每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救了，動物島就不能再玩
+// 動物島籠子裡的動物：每次隨機出現一隻還沒救過的，救過的不會再出現
 const ANIMALS = [
   { id:'dog',    name:['狗狗', 'ㄍㄡˇ ˙ㄍㄡ'],   sound:['汪汪', 'ㄨㄤ ㄨㄤ'],     emoji:'🐶' },
   { id:'cat',    name:['貓咪', 'ㄇㄠ ㄇㄧ'],     sound:['喵喵', 'ㄇㄧㄠ ㄇㄧㄠ'], emoji:'🐱' },
   { id:'rabbit', name:['兔子', 'ㄊㄨˋ ˙ㄗ'],     sound:['蹦蹦', 'ㄅㄥˋ ㄅㄥˋ'],   emoji:'🐰' },
   { id:'pig',    name:['小豬', 'ㄒㄧㄠˇ ㄓㄨ'],  sound:['嚕嚕', 'ㄌㄨ ㄌㄨ'],     emoji:'🐷' },
-  { id:'chick',  name:['小雞', 'ㄒㄧㄠˇ ㄐㄧ'],  sound:['啾啾', 'ㄐㄧㄡ ㄐㄧㄡ'], emoji:'🐤' }
+  { id:'chick',  name:['小雞', 'ㄒㄧㄠˇ ㄐㄧ'],  sound:['啾啾', 'ㄐㄧㄡ ㄐㄧㄡ'], emoji:'🐤' },
+  { id:'duck',   name:['鴨子', 'ㄧㄚ ˙ㄗ'],     sound:['呱呱', 'ㄍㄨㄚ ㄍㄨㄚ'], emoji:'🦆' },
+  { id:'guinea', name:['天竺鼠', 'ㄊㄧㄢ ㄓㄨˊ ㄕㄨˇ'], sound:['吱吱', 'ㄓ ㄓ'], emoji:'🐹' },
+  { id:'bear',   name:['熊熊', 'ㄒㄩㄥˊ ㄒㄩㄥˊ'], sound:['嗷嗚', 'ㄠˊ ㄨ'],     emoji:'🐻' }
 ];
 const animalById = id => PETS.find(a => a.id === id) || ANIMALS[0];
 const aSay = a => [`${a.sound[0]}！`, `${a.sound[1]}！`];
@@ -804,7 +814,7 @@ const aTrapped = a => [`有一隻${a.name[0]}被關在門後面，快救牠！`,
 const animalsLeft = () => ANIMALS.filter(a => !S.items.includes(a.id));
 // 恐龍島的寵物：小恐龍（不會出現在動物島的籠子裡）
 const PETS = [...ANIMALS, { id:'dino', name:['恐龍', 'ㄎㄨㄥˇ ㄌㄨㄥˊ'], sound:['吼吼', 'ㄏㄡˇ ㄏㄡˇ'], emoji:'🦖' }];
-// 五隻動物都救出來以後，籠子裡改放好吃的食物：打開六道門拿到食物，再選一隻動物送給牠
+// 籠子裡也可能放好吃的食物：打開六道門拿到食物，再選一隻動物送給牠
 const FOODS = [
   { id:'bone',   name:['骨頭', 'ㄍㄨˇ ˙ㄊㄡ'],         unit:['一根', 'ㄧ ㄍㄣ'],   emoji:'🦴' },
   { id:'fish',   name:['小魚', 'ㄒㄧㄠˇ ㄩˊ'],        unit:['一條', 'ㄧ ㄊㄧㄠˊ'], emoji:'🐟' },
@@ -814,7 +824,15 @@ const FOODS = [
   { id:'melon',  name:['西瓜', 'ㄒㄧ ㄍㄨㄚ'],        unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍉' },
   { id:'cookie', name:['餅乾', 'ㄅㄧㄥˇ ㄍㄢ'],       unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' }
 ];
-const foodById = id => FOODS.find(f => f.id === id) || FOODS[0];
+// 恐龍島的裝備都送完以後，改送恐龍造型餅乾（也可以拿去餵動物）
+const DINO_COOKIES = [
+  { id:'ck_trex',  name:['暴龍餅乾', 'ㄅㄠˋ ㄌㄨㄥˊ ㄅㄧㄥˇ ㄍㄢ'],   unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' },
+  { id:'ck_tri',   name:['三角龍餅乾', 'ㄙㄢ ㄐㄧㄠˇ ㄌㄨㄥˊ ㄅㄧㄥˇ ㄍㄢ'], unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' },
+  { id:'ck_brach', name:['腕龍餅乾', 'ㄨㄢˋ ㄌㄨㄥˊ ㄅㄧㄥˇ ㄍㄢ'],   unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' },
+  { id:'ck_steg',  name:['劍龍餅乾', 'ㄐㄧㄢˋ ㄌㄨㄥˊ ㄅㄧㄥˇ ㄍㄢ'],   unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' },
+  { id:'ck_ptero', name:['翼龍餅乾', 'ㄧˋ ㄌㄨㄥˊ ㄅㄧㄥˇ ㄍㄢ'],    unit:['一片', 'ㄧ ㄆㄧㄢˋ'], emoji:'🍪' }
+];
+const foodById = id => FOODS.find(f => f.id === id) || DINO_COOKIES.find(f => f.id === id) || FOODS[0];
 const fGet = f => [`打開六道電子鎖，拿到${f.name[0]}！`, `ㄉㄚˇ ㄎㄞ ㄌㄧㄡˋ ㄉㄠˋ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ，ㄋㄚˊ ㄉㄠˋ ${f.name[1]}！`];
 const fSay = f => [`好吃的${f.name[0]}！`, `ㄏㄠˇ ㄔ ˙ㄉㄜ ${f.name[1]}！`];
 const fGot = f => [`拿到${f.name[0]}了！`, `ㄋㄚˊ ㄉㄠˋ ${f.name[1]} ˙ㄌㄜ！`];
@@ -836,6 +854,7 @@ const REWARDS = [
   ['bicycle', '腳踏車', 'ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ', 'ride', ['一台', 'ㄧ ㄊㄞˊ']],
   ['plane', '飛機', 'ㄈㄟ ㄐㄧ', 'ride', ['一架', 'ㄧ ㄐㄧㄚˋ']],
   ['balancebike', '滑步車', 'ㄏㄨㄚˊ ㄅㄨˋ ㄔㄜ', 'ride', ['一台', 'ㄧ ㄊㄞˊ']],
+  ['carriage', '馬車', 'ㄇㄚˇ ㄔㄜ', 'ride', ['一輛', 'ㄧ ㄌㄧㄤˋ']],
   ['magnifier', '放大鏡', 'ㄈㄤˋ ㄉㄚˋ ㄐㄧㄥˋ', 'hand'],
   ['cape', '披風', 'ㄆㄧ ㄈㄥ', 'back'],
   ['police', '警察裝', 'ㄐㄧㄥˇ ㄔㄚˊ ㄓㄨㄤ', 'outfit'],
@@ -846,12 +865,25 @@ const DEFAULT_LOOK = { coat:0, hair:'short', hairC:0, glasses:'none', hat:'none'
 
 const shade = (hex, f) => '#' + [1, 3, 5].map(i => Math.max(0, Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * f))).toString(16).padStart(2, '0')).join('');
 const SP_W = 22, SP_H = 25;
+// 帽子、眼鏡的顏色（第一個是主色）：換顏色時，每個顏色照它跟主色的深淺比例換成新顏色
+const ITEM_COLS = {
+  deer:['#9a7448', '#7a5430'], cap:['#d8402c', '#a82a1a'], helmet:['#ffd23c', '#f0b820', '#e8a820', '#fff2a0'],
+  wizard:['#6a3ab8', '#4a2a8a', '#7a4ac8'], douli:['#e8c870', '#c8a050', '#fff0b8'],
+  round:['#7a4a22'], square:['#2c64d8'], sun:['#1b1b2f'], mono:['#f0c040']
+};
+function itemSwap(id){
+  const col = S.vcol[id], list = ITEM_COLS[id];
+  if (!col || !list) return null;
+  const lum = h => [1, 3, 5].reduce((t, i) => t + parseInt(h.slice(i, i + 2), 16), 0) + 1, base = lum(list[0]);
+  return Object.fromEntries(list.map(c => [c, shade(col, Math.min(1.5, lum(c) / base))]));
+}
 // only：只畫某一部分（換裝選單的小圖用）：'hair' 頭髮、'coat' 衣服、'outfit' 套裝、'glasses' 眼鏡、'hat' 帽子、'hand' 手上的東西、'back' 披風
 // 小小的像素人：大頭、短身體，臉微微朝右，每種顏色有亮面和暗面，外面一圈深色描邊
 function spriteCanvas(look, only){
   const c = document.createElement('canvas'); c.width = SP_W; c.height = SP_H;
   const g = c.getContext('2d');
-  const R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x + 1, y + 6, w, h); };
+  let SW = null;   // 換過顏色的帽子／眼鏡：原本的顏色 → 新顏色
+  const R = (x, y, w, h, col) => { g.fillStyle = (SW && SW[col]) || col; g.fillRect(x + 1, y + 6, w, h); };
   const coat = COATS[look.coat][0], cs = shade(coat, .78), cl = shade(coat, 1.15);
   const hc = HAIR_C[look.hairC][0], hs = shade(hc, .78), hl = shade(hc, 1.3);
   const skin = '#f8c8a0', sks = '#e0a47e', ink = '#1b1b2f', pants = '#33335a', shoe = '#22223a';
@@ -938,6 +970,7 @@ function spriteCanvas(look, only){
     if (look.hair === 'pony') R(2, 3, 1, 2, '#e84a6a');
   }
   // 眼鏡
+  SW = itemSwap(look.glasses);
   if (!on('glasses')) {}
   else if (look.glasses === 'dinomask'){
     // 恐龍面具：綠色面罩蓋住眼睛，往右凸出的鼻子，下緣一排小白牙，後面有綁帶
@@ -962,6 +995,7 @@ function spriteCanvas(look, only){
     const gc = '#f0c040';
     R(12, 5, 1, 1, gc); R(12, 8, 1, 1, gc); R(11, 6, 1, 2, gc); R(13, 6, 1, 2, gc); R(13, 9, 1, 2, gc);
   }
+  SW = itemSwap(look.hat);
   // 帽子
   if (!on('hat')) {}
   else if (look.hat === 'deer'){
@@ -988,6 +1022,7 @@ function spriteCanvas(look, only){
     [[9, -3, 1], [7, -2, 5], [5, -1, 9], [3, 0, 13], [1, 1, 17], [0, 2, 19]].forEach(([x, y, w]) => R(x, y, w, 1, '#e8c870'));
     R(0, 2, 19, 1, '#c8a050'); R(4, 0, 1, 1, '#c8a050'); R(9, -1, 1, 3, '#c8a050'); R(14, 0, 1, 1, '#c8a050'); R(6, -1, 2, 1, '#fff0b8');
   }
+  SW = null;
   // 自動描黑邊
   const d = g.getImageData(0, 0, SP_W, SP_H), a = d.data, op = i => a[i * 4 + 3] > 0, out = [];
   for (let y = 0; y < SP_H; y++) for (let x = 0; x < SP_W; x++){
@@ -1050,6 +1085,22 @@ function animalCanvas(id){
     R(1, 1, 6, 4, gr); R(1, 4, 5, 2, gr); R(3, 2, 1, 1, ink); R(2, 5, 1, 1, '#ffffff'); R(4, 5, 1, 1, '#ffffff');
     R(5, 7, 1, 1, gS);
     R(7, 4, 1, 1, '#ffd23c'); R(9, 4, 1, 1, '#ffd23c'); R(11, 5, 1, 1, '#ffd23c');
+  } else if (id === 'duck'){   // 鴨子：白色、橘色嘴巴和腳
+    const w = '#ffffff', wS = '#d0d0e0', or = '#ff9a20';
+    R(5, 6, 9, 5, w); R(4, 7, 11, 3, w); R(14, 5, 2, 2, w); R(5, 10, 9, 1, wS); R(8, 7, 5, 2, wS);
+    R(2, 1, 5, 5, w); R(4, 5, 3, 2, w); R(0, 3, 3, 2, or); R(3, 2, 1, 1, ink);
+    R(7, 11, 2, 2, or); R(11, 11, 2, 2, or);
+  } else if (id === 'guinea'){   // 天竺鼠：咖啡色加白色，圓滾滾
+    const b = '#c8864a', bS = '#9a6030', cr = '#fff0d8';
+    R(5, 4, 10, 1, b); R(4, 5, 12, 6, b); R(5, 11, 10, 1, bS); R(9, 5, 4, 6, cr);
+    R(1, 4, 6, 6, b); R(3, 3, 2, 1, '#e8a0a0'); R(2, 6, 1, 1, ink); R(0, 7, 1, 1, pink); R(1, 8, 3, 1, cr);
+    R(4, 12, 2, 1, bS); R(13, 12, 2, 1, bS);
+  } else if (id === 'bear'){   // 熊熊：咖啡色、圓耳朵、淺色鼻子
+    const br = '#a8683a', bS = '#7a4a24', mz = '#e8c090';
+    R(1, 0, 3, 3, br); R(6, 0, 3, 3, br); R(2, 1, 1, 1, bS); R(7, 1, 1, 1, bS);
+    R(1, 2, 8, 7, br); R(1, 5, 4, 3, mz); R(1, 5, 2, 1, ink); R(3, 4, 1, 1, ink); R(6, 4, 1, 1, ink);
+    R(8, 5, 8, 6, br); R(8, 10, 8, 1, bS); R(10, 7, 4, 3, mz);
+    R(8, 11, 3, 2, br); R(13, 11, 3, 2, bS);
   } else {   // 狗狗：紅項圈
     const tan = '#e0a050', tanS = '#b87a34', wht = '#fff4e0', dark = '#7a4a22';
     R(14, 4, 1, 3, tan); R(15, 3, 1, 2, tan);
@@ -1076,7 +1127,18 @@ function foodCanvas(id){
   const c = document.createElement('canvas'); c.width = 18; c.height = 15;
   const g = c.getContext('2d'), R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
   const disc = (cx, cy, r, f) => { for (let y = 0; y < 15; y++) for (let x = 0; x < 18; x++){ const d = Math.hypot(x + .5 - cx, y + .5 - cy); if (d <= r){ const col = f(d, x, y); if (col) R(x, y, 1, 1, col); } } };
-  if (id === 'bone'){
+  if (id.startsWith('ck_')){   // 恐龍造型餅乾：餅乾色＋白色糖粒
+    const k = '#d8a050', S2 = (x, y, w, h) => R(x, y, w, h, k);
+    if (id === 'ck_trex'){ S2(6, 5, 7, 5); S2(1, 2, 6, 4); S2(1, 6, 4, 1); S2(13, 6, 3, 2); S2(16, 7, 1, 1); S2(7, 10, 2, 4); S2(11, 10, 2, 4); S2(5, 7, 1, 2); R(3, 3, 1, 1, '#5a3418'); }
+    else if (id === 'ck_tri'){ S2(5, 5, 10, 6); S2(1, 4, 5, 5); S2(5, 2, 3, 3); S2(0, 3, 2, 1); S2(2, 2, 1, 2); S2(6, 11, 2, 3); S2(12, 11, 2, 3); S2(15, 7, 2, 2); R(2, 5, 1, 1, '#5a3418'); }
+    else if (id === 'ck_brach'){ S2(1, 0, 4, 3); S2(3, 3, 3, 5); S2(5, 7, 9, 5); S2(14, 8, 3, 2); S2(6, 12, 2, 2); S2(11, 12, 2, 2); R(2, 1, 1, 1, '#5a3418'); }
+    else if (id === 'ck_steg'){ S2(3, 6, 11, 5); S2(4, 4, 2, 2); S2(7, 3, 2, 3); S2(10, 4, 2, 2); S2(0, 8, 3, 3); S2(14, 8, 3, 2); S2(16, 6, 1, 2); S2(4, 11, 2, 3); S2(11, 11, 2, 3); R(1, 9, 1, 1, '#5a3418'); }
+    else { S2(7, 6, 4, 3); S2(1, 4, 6, 2); S2(2, 6, 5, 1); S2(11, 4, 6, 2); S2(11, 6, 5, 1); S2(9, 3, 4, 3); S2(12, 2, 3, 1); S2(13, 4, 3, 1); R(10, 4, 1, 1, '#5a3418'); }
+    // 餅乾烤過的邊和糖粒
+    const d = g.getImageData(0, 0, 18, 15).data, op = (x, y) => x >= 0 && y >= 0 && x < 18 && y < 15 && d[(y * 18 + x) * 4 + 3] > 0;
+    for (let y = 0; y < 15; y++) for (let x = 0; x < 18; x++) if (op(x, y) && d[(y * 18 + x) * 4] === 0xd8 && (!op(x + 1, y) || !op(x, y + 1))) R(x, y, 1, 1, '#b07a30');
+    [[8, 7], [11, 8], [3, 4], [9, 9], [12, 5]].forEach(([x, y]) => { if (op(x, y) && d[(y * 18 + x) * 4] === 0xd8) R(x, y, 1, 1, '#fff0c0'); });
+  } else if (id === 'bone'){
     const w = '#f4f0e0', sh = '#cfc6aa';
     R(5, 6, 8, 3, w); R(5, 8, 8, 1, sh);
     [[2, 4], [2, 8], [12, 4], [12, 8]].forEach(([x, y]) => { R(x + 1, y, 2, 3, w); R(x, y + 1, 4, 1, w); R(x + 1, y + 2, 2, 1, sh); });
@@ -1133,7 +1195,7 @@ function paintPart(cv, look, part){
 
 /* ================= 存檔 ================= */
 const SAVE_KEY = 'math-detective-v1';
-const S = { animal:'dog', look:{ ...DEFAULT_LOOK }, cleared:false, door:0, mistakes:0, wrongTotal:0, q:0, entry:'', used:[], hint:false, alarm:false, busy:false, onCase:true, items:[], view:'map', done:[] };
+const S = { animal:'dog', look:{ ...DEFAULT_LOOK }, vcol:{}, cleared:false, door:0, mistakes:0, wrongTotal:0, q:0, entry:'', used:[], hint:false, alarm:false, busy:false, onCase:true, items:[], view:'map', done:[] };
 try {
   const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
   if (s){
@@ -1141,17 +1203,18 @@ try {
     if (Array.isArray(s.done)) S.done = s.done.filter(n => Number.isInteger(n));
     else if (s.cleared) S.done = [0];   // 舊存檔：大門過關＝動物島過關
     if (Array.isArray(s.items)) S.items = s.items.filter(id => REWARDS.some(r => r[0] === id));
+    if (s.vcol && typeof s.vcol === 'object') Object.keys(s.vcol).forEach(k => { if (/^#[0-9a-f]{6}$/i.test(s.vcol[k])) S.vcol[k] = s.vcol[k]; });
     ['hat', 'glasses', 'hand', 'back', 'outfit', 'pet', 'feet', 'ride'].forEach(k => { if (S.look[k] !== 'none' && !S.items.includes(S.look[k])) S.look[k] = 'none'; });
     if (!COATS[S.look.coat]) S.look.coat = 0;
     if (!HAIR_C[S.look.hairC]) S.look.hairC = 0;
   }
 } catch (e) {}
-function save(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify({ look:S.look, done:S.done, items:S.items })); } catch (e) {} }
+function save(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify({ look:S.look, done:S.done, items:S.items, vcol:S.vcol })); } catch (e) {} }
 
 /* ================= 主畫面 ================= */
 let msgSpeech = '';
 function setMsg(p, pic = '🕵️', kind = ''){
-  $('msgSay').innerHTML = T(p); $('msgPic').textContent = pic;
+  $('msgSay').innerHTML = T(p); $('msgPic').textContent = '';   // 訊息前面不放小圖
   $('msgbar').className = 'msgbar' + (kind ? ' ' + kind : '');
   msgSpeech = p[0];
 }
@@ -1261,9 +1324,10 @@ function enterIsland(i){
   showView();
   runMsg();
 }
-// 新的一輪：還有動物沒救就關一隻動物；五隻都救了，籠子裡改放食物
+// 新的一輪：裝備箱裡還沒有動物時，一定關一隻動物；有動物以後，動物和食物隨機（動物都救完就只有食物）
 function newRun(){
-  const left = animalsLeft(), an = left.length ? left[Math.floor(Math.random() * left.length)] : null;
+  const left = animalsLeft(), hasPet = ANIMALS.some(a => S.items.includes(a.id));
+  const an = left.length && (!hasPet || Math.random() < .5) ? left[Math.floor(Math.random() * left.length)] : null;
   Object.assign(S, { animal:an ? an.id : S.animal, food:an ? null : FOODS[Math.floor(Math.random() * FOODS.length)].id,
     cleared:false, door:0, mistakes:0, wrongTotal:0, q:0, entry:'', used:[], alarm:false, busy:false });
 }
@@ -1284,12 +1348,12 @@ $('bldg').addEventListener('click', e => {
   }
 });
 /* ================= 藏寶圖：用ㄅㄆㄇ森林的地圖改的，點哪裡小偵探就走過去 ================= */
-// 圖塊：# 松樹、. 草地、* 花、~ 河、B 橋、P 起點、X 照相機
+// 圖塊：# 松樹、. 草地、* 花、~ 河、B 橋、P 起點、X 照相機、Y 裝備箱
 //       a～f 六個關卡（每個佔 6 格不規則的區塊，關卡名字寫在格子裡；點區塊裡任何一格都會走過去進入關卡）
 const TS = 16, MCOLS = 16, MROWS = 12, INK = '#1b1b2f';
 const MAP = [
   '################',
-  '#......bbb.....#',
+  '#Y.....bbb.....#',
   '#.aaa#.bbb.ccc.#',
   '#.aaa..#...ccc.#',
   '#....P#..#.....#',
@@ -1322,8 +1386,8 @@ const ZONES = [...ZONE_CH].map(ch => {
   const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
   return { tiles, cx:(x0 + x1 + 1) / 2, cy:(y0 + y1 + 1) / 2, y0, y1 };
 });
-let startTile = { x:2, y:4 }, chestTile = { x:2, y:10 };
-MAP.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'P') startTile = { x, y }; if (ch === 'X') chestTile = { x, y }; }));
+let startTile = { x:2, y:4 }, chestTile = { x:2, y:10 }, boxTile = { x:1, y:1 };
+MAP.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === 'P') startTile = { x, y }; if (ch === 'X') chestTile = { x, y }; if (ch === 'Y') boxTile = { x, y }; }));
 
 // ---------- 圖塊（跟ㄅㄆㄇ森林一樣的畫法） ----------
 function ground(g, ox, oy, x, y){
@@ -1553,6 +1617,7 @@ function renderMapBg(){
     else if (ch === 'B') bridge(g, ox, oy);
     else if (ch === '*') flower(g, ox, oy, x, y);
     else if (ch === 'X') camera(g, ox, oy);
+    else if (ch === 'Y') equipBox(g, ox, oy);
     else ground(g, ox, oy, x, y);
   }
   // 島：畫在草地上
@@ -1565,7 +1630,8 @@ const pct = (x, y) => `left:${x / MCOLS * 100}%;top:${y / MROWS * 100}%`;
 function renderMapLabels(){
   // 島上不寫名字，只有圖案；過關的島插一面小旗子
   $('mlayer').innerHTML = ZONES.map((z, i) => S.done.includes(i) ? `<div class="zflag2" style="${pct(z.cx + .9, z.y0 + .1)}">🚩</div>` : '').join('')
-    + `<div class="mlabel chest" style="${pct(chestTile.x + 1, chestTile.y + 1)}">📷 ${T(W.photo)}</div>`;
+    + `<div class="mlabel chest" style="${pct(chestTile.x + 1, chestTile.y + 1)}">📷 ${T(W.photo)}</div>`
+    + `<div class="mlabel chest" style="${pct(boxTile.x + .5, boxTile.y - .9)}">🎒 ${T(W.box)}</div>`;
 }
 
 // ---------- 走路 ----------
@@ -1584,6 +1650,7 @@ function bumpInto(x, y){
   const z = zoneOf(x, y);
   if (z >= 0){ held = []; walkPath = null; enterIsland(z); return true; }
   if (mtile(x, y) === 'X'){ openPhoto(); return true; }   // 照相機：拍照
+  if (mtile(x, y) === 'Y'){ held = []; walkPath = null; openDress(); return true; }   // 裝備箱：換裝
   return false;
 }
 function tryMove(dir){
@@ -1612,9 +1679,9 @@ function findPath(sx, sy, goals){
   }
   return null;
 }
-// 點地圖：點關卡區裡任何地方 → 走到區域旁邊再走進去；點照相機 → 走過去；點空地 → 走過去；點自己 → 換裝；點狗狗 → 汪汪
+// 點地圖：點關卡區裡任何地方 → 走到區域旁邊再走進去；點照相機 → 走過去；點裝備箱 → 直接打開；點空地 → 走過去；點寵物 → 叫一聲
 function tapWalk(t){
-  if (t.x === me.x && (t.y === me.y || t.y === me.y - 1) && !me.moving){ openDress(); return; }
+  if (mtile(t.x, t.y) === 'Y'){ held = []; walkPath = null; openDress(); return; }   // 點左上角的裝備箱就打開
   if (hasDog() && t.x === pup.x && t.y === pup.y){ const a = animalById(S.look.pet); SFX.animal(a.id); setMsg(aSay(a), a.emoji); return; }
   const z = zoneOf(t.x, t.y), isChest = mtile(t.x, t.y) === 'X';
   if (z >= 0 && (!unlocked(z) || !ISLANDS[z].ready)){ enterIsland(z); return; }   // 還沒開放：直接說明
@@ -1696,9 +1763,9 @@ function drawMap(){
     } else drawFlip(mctx, meSpr, me.px - 3, me.py - 8 - bob, me.face === 'l');
   }});
   ents.sort((a, b) => a.y - b.y).forEach(e => e.f());
-  // 一開始在小偵探頭上畫跳動的「！」，提示可以點人物打開裝備箱；打開過一次就不再顯示
+  // 一開始在裝備箱上面畫跳動的「！」，提示可以點它換裝；打開過一次就不再顯示
   if (!boxOpened){
-    const j = Math.floor(frame / 20) % 2, bx = me.px + 3, by = me.py - (rideSpr ? 30 : 24) - j;
+    const j = Math.floor(frame / 20) % 2, bx = (boxTile.x + 1) * TS + 2, by = boxTile.y * TS + 1 - j;
     P(mctx, bx, by, INK, 10, 12); P(mctx, bx + 1, by + 1, '#ffffff', 8, 10);
     P(mctx, bx + 4, by + 2, '#e03030', 2, 5); P(mctx, bx + 4, by + 8, '#e03030', 2, 2);
   }
@@ -1989,7 +2056,11 @@ function foodCleared(){
   const f = foodById(S.food);
   save(); renderBuilding(); renderHud();
   setMsg(fGot(f), f.emoji, 'ok');
-  setTimeout(() => {
+  setTimeout(() => feedPanel(f, resetRun), 900);
+}
+// 破關獎勵是食物：下面選一隻動物送給牠（againFn：「再玩一次」要做什麼）
+function feedPanel(f, againFn){
+  {
     SFX.item();
     const pets = PETS.filter(a => S.items.includes(a.id));
     showOv(`<div class="panel center-panel party feed-panel">
@@ -2002,11 +2073,11 @@ function foodCleared(){
     const g = $('prizeCv').getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(foodCanvas(f.id), 0, 0);
     ov.querySelectorAll('[data-fp]').forEach(c => paintAnimal(c, c.dataset.fp));
     setMsg(W.giveWho, f.emoji);
-    ov.onclick = e => { const b = e.target.closest('[data-feed]'); if (b) showLove(animalById(b.dataset.feed), f); };
-  }, 900);
+    ov.onclick = e => { const b = e.target.closest('[data-feed]'); if (b) showLove(animalById(b.dataset.feed), f, againFn); };
+  }
 }
 // 動物吃到食物好開心：隨機背景、隨機動作，上面跳出一顆大愛心
-function showLove(an, f){
+function showLove(an, f, againFn = resetRun){
   SFX.animal(an.id); setTimeout(SFX.clear, 400);
   const bg = document.createElement('canvas'); bg.width = PH_W; bg.height = PH_H;
   const bgG = bg.getContext('2d'); bgG.imageSmoothingEnabled = false;
@@ -2027,7 +2098,7 @@ function showLove(an, f){
   setMsg(fHappy(an), '💖', 'ok');
   ov.onclick = e => {
     if (e.target.closest('[data-map]')){ SFX.blip(); goMap(); }
-    else if (e.target.closest('[data-again]')){ hideOv(); resetRun(); }
+    else if (e.target.closest('[data-again]')){ hideOv(); againFn(); }
   };
 }
 // direct：有獎勵時直接跳出破關獎勵畫面，不先顯示慶祝頁
@@ -2237,6 +2308,8 @@ function dinoCleared(){
   if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
   save(); renderHud(DQ);
   setMsg(W.dinoDone, '🦖', 'ok');
+  // 裝備都送完了：改送恐龍造型餅乾，可以拿去餵動物
+  if (!item && PETS.some(a => S.items.includes(a.id))){ SFX.clear(); setTimeout(() => feedPanel(pickOne(DINO_COOKIES), () => enterDino()), 600); return; }
   const stars = S.dino.wrong === 0 ? 3 : S.dino.wrong <= 2 ? 2 : 1;
   celebrate(`<div class="say">${T(W.dinoDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
     item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
@@ -2555,7 +2628,7 @@ $('trCv').addEventListener('pointerdown', e => {
   else if (R0.step === 'which'){ const b = $('trNum').querySelector(`[data-kind="${y < 74 ? 'cars' : 'scooters'}"]`); if (b) answerCount(b); }   // 點上面那排＝汽車、下面那排＝機車
 });
 // 交通島過關：從五種交通工具裡隨機送一樣還沒拿到的
-const TRAFFIC_PRIZES = ['convertible', 'scooter', 'bicycle', 'plane', 'balancebike'];
+const TRAFFIC_PRIZES = ['convertible', 'scooter', 'bicycle', 'plane', 'balancebike', 'carriage'];
 function trafficCleared(){
   if (!S.done.includes(2)) S.done.push(2);
   const left = TRAFFIC_PRIZES.filter(id => !S.items.includes(id));
@@ -2564,16 +2637,75 @@ function trafficCleared(){
   if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
   save(); renderHud(TRQ);
   setMsg(W.trDone, '🚗', 'ok');
+  if (!item && TRAFFIC_PRIZES.some(id => S.items.includes(id))){ SFX.clear(); setTimeout(() => paintPanel('ride', TRAFFIC_PRIZES, () => enterTraffic()), 600); return; }
   const stars = S.tr.wrong === 0 ? 3 : S.tr.wrong <= 2 ? 2 : 1;
   celebrate(`<div class="say">${T(W.trDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
     item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
     true, () => enterTraffic(), true);
 }
 
+// 顏料：先選一台交通工具，再選顏色，那一台就換成新顏色
+function paintCanvas(){
+  const c = document.createElement('canvas'); c.width = 18; c.height = 15;
+  const g = c.getContext('2d'), R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  R(3, 5, 12, 9, '#c8c8d8'); R(3, 12, 12, 2, '#9a9aaa'); R(12, 5, 3, 9, '#b0b0c0');
+  R(3, 4, 4, 2, '#e03c2c'); R(7, 4, 4, 2, '#f0c020'); R(11, 4, 4, 2, '#2c64d8'); R(4, 6, 2, 3, '#e03c2c'); R(9, 6, 1, 2, '#f0c020'); R(12, 6, 2, 4, '#2c64d8');
+  R(2, 1, 1, 3, '#5a5a6a'); R(15, 1, 1, 3, '#5a5a6a'); R(3, 0, 12, 1, '#5a5a6a');
+  return outlined(c);
+}
+// slot：ride 交通工具、hat 帽子、glasses 眼鏡；ids：可以換顏色的那幾樣
+const PAINT_WHO = {
+  ride:['要幫哪一台換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ㄊㄞˊ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？'],
+  hat:['要幫哪一頂換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ㄉㄧㄥˇ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？'],
+  glasses:['要幫哪一副換顏色？', 'ㄧㄠˋ ㄅㄤ ㄋㄚˇ ㄧ ㄈㄨˋ ㄏㄨㄢˋ ㄧㄢˊ ㄙㄜˋ？']
+};
+function paintPanel(slot, ids, againFn){
+  SFX.item();
+  const items = ids.filter(id => S.items.includes(id)).map(id => REWARDS.find(r => r[0] === id));
+  const who = PAINT_WHO[slot];
+  const drawItem = (cv, id) => {
+    if (slot === 'ride'){ cv.width = 26; cv.height = 16; const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(vehicleCanvas(id), 0, 0); }
+    else paintPart(cv, { ...S.look, outfit:'none', [slot]:id }, slot);
+  };
+  let pick = null;
+  const draw = () => {
+    showOv(`<div class="panel center-panel party feed-panel">
+      <div class="headline" style="font-size:clamp(26px,4vw,38px)">🎁 ${T(W.prize)}</div>
+      <canvas id="prizeCv" class="prize" width="18" height="15"></canvas>
+      <div class="say c" style="font-size:clamp(24px,3.6vw,32px)">${T(pick ? [pick[1], pick[2]] : W.paintGot)}</div>
+      <div class="feed-ask">${T(pick ? W.paintCol : who)}</div>
+      <div class="feed-row">${pick
+        ? PAINT_COLS.map(c => `<button class="swatch" data-col="${c}" style="background:${c}" aria-label="顏色"></button>`).join('')
+        : items.map(r => `<button class="feed-pet" data-pick="${r[0]}" aria-label="${r[1]}"><canvas data-pc="${r[0]}"></canvas>${Z(r[2], r[1])}</button>`).join('')}</div>
+      ${pick ? `<div class="row"><button class="btn alt" data-back>◀ ${T(who)}</button></div>` : ''}
+    </div>`, 'party-bg');
+    if (pick) drawItem($('prizeCv'), pick[0]);
+    else { const g = $('prizeCv').getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(paintCanvas(), 0, 0); }
+    ov.querySelectorAll('[data-pc]').forEach(cv => drawItem(cv, cv.dataset.pc));
+    setMsg(pick ? W.paintCol : who, '🎨');
+  };
+  draw();
+  ov.onclick = e => {
+    const r = e.target.closest('[data-pick]'), sw = e.target.closest('[data-col]');
+    if (r){ SFX.blip(); pick = items.find(x => x[0] === r.dataset.pick); draw(); }
+    else if (e.target.closest('[data-back]')){ SFX.blip(); pick = null; draw(); }
+    else if (sw && pick){
+      S.vcol[pick[0]] = sw.dataset.col; S.look[slot] = pick[0]; save(); renderDet(); refreshMapSprite();
+      const done = [`${pick[1]}換新顏色了！`, `${pick[2]} ㄏㄨㄢˋ ㄒㄧㄣ ㄧㄢˊ ㄙㄜˋ ˙ㄌㄜ！`];
+      celebrate('', { look:{ ...S.look }, part:slot, text:done }, true, againFn, true);
+      setMsg(done, '🎨', 'ok');
+    }
+  };
+}
 // 交通島的獎勵：坐騎（26×16，臉朝右）。小偵探在藏寶圖上會坐在上面
 const VEH_CACHE = {};
-function vehicleCanvas(id){
-  if (VEH_CACHE[id]) return VEH_CACHE[id];
+// 每一台的主色（和暗面）：換顏色時把這兩種顏色換掉
+const VEH_MAIN = { convertible:['#e03c2c', '#9a2014'], scooter:['#2c64d8', '#183c88'], bicycle:['#3c9c3c'], plane:['#e03c2c'], balancebike:['#f0c020', '#c89a10'], carriage:['#e05a9a', '#a83470'] };
+const PAINT_COLS = ['#e03c2c', '#ff8a20', '#f0c020', '#3c9c3c', '#2c64d8', '#8a48c8', '#ff6ea8', '#4a4a5a'];
+// col：不給就用裝備箱裡換過的顏色；給 null 就是原本的顏色（交通島題目裡的機車）
+function vehicleCanvas(id, col = S.vcol[id]){
+  const key = id + (col || '');
+  if (VEH_CACHE[key]) return VEH_CACHE[key];
   const c = document.createElement('canvas'); c.width = 26; c.height = 16;
   const g = c.getContext('2d');
   const R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
@@ -2599,12 +2731,26 @@ function vehicleCanvas(id){
   } else if (id === 'plane'){       // 飛機：白色機身、紅色機翼
     R(3, 6, 18, 4, '#f4f4f8'); R(3, 8, 18, 1, '#e03c2c'); R(21, 7, 2, 2, '#c8c8d8'); R(23, 4, 1, 8, '#5a5a6a');
     R(10, 10, 8, 3, '#e03c2c'); R(10, 3, 6, 3, '#e03c2c'); R(2, 2, 3, 5, '#e03c2c'); R(15, 6, 3, 1, '#bfe8ff');
+  } else if (id === 'carriage'){    // 馬車：粉紅色的車廂，前面一匹咖啡色的馬
+    R(1, 5, 13, 1, '#a83470'); R(1, 6, 13, 4, '#e05a9a'); R(1, 9, 13, 1, '#a83470'); R(1, 2, 1, 4, '#e05a9a'); R(4, 7, 6, 1, '#ffd23c');
+    R(13, 8, 4, 1, '#6a3a2a');
+    R(16, 5, 6, 4, '#a8683a'); R(20, 3, 2, 3, '#a8683a'); R(21, 1, 3, 3, '#a8683a'); R(24, 2, 1, 2, '#a8683a'); R(21, 0, 1, 1, '#a8683a');
+    R(19, 2, 1, 4, '#5a3418'); R(15, 5, 1, 4, '#5a3418'); R(22, 2, 1, 1, INK);
+    R(16, 9, 1, 5, '#7a4a24'); R(21, 9, 1, 5, '#7a4a24'); R(16, 14, 1, 1, INK); R(21, 14, 1, 1, INK);
+    wheel(5, 12, 3, INK, '#ffd23c'); wheel(11, 12, 2, INK, '#ffd23c');
   } else {                          // 滑步車：黃色、沒有踏板
     wheel(6, 12, 3, INK, '#c8c8d8'); wheel(19, 12, 3, INK, '#c8c8d8');
     R(7, 8, 11, 2, '#f0c020'); R(7, 9, 11, 1, '#c89a10'); R(8, 6, 4, 1, '#3a3a4a'); R(9, 7, 1, 1, '#f0c020');
     R(17, 3, 1, 6, '#f0c020'); R(16, 3, 3, 1, '#3a3a4a');
   }
-  return (VEH_CACHE[id] = outlined(c));
+  if (col && VEH_MAIN[id]){   // 換顏色
+    const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)), [m, md] = VEH_MAIN[id];
+    const from = [hex(m), md ? hex(md) : null], to = [hex(col), hex(shade(col, .65))];
+    const im = g.getImageData(0, 0, 26, 16), a = im.data;
+    for (let i = 0; i < a.length; i += 4) from.forEach((f, k) => { if (f && a[i] === f[0] && a[i + 1] === f[1] && a[i + 2] === f[2]){ a[i] = to[k][0]; a[i + 1] = to[k][1]; a[i + 2] = to[k][2]; } });
+    g.putImageData(im, 0, 0);
+  }
+  return (VEH_CACHE[key] = outlined(c));
 }
 
 /* ================= 照相機：幫小偵探（穿搭＋寵物＋坐騎）拍一張照，背景隨機 ================= */
@@ -2709,6 +2855,15 @@ function openPhoto(){
   shoot();
   setMsg(W.mPhoto, '📷', 'ok');
 }
+// 地圖左上角的裝備箱：木頭箱子＋金色的邊和鎖
+function equipBox(g, ox, oy){
+  ground(g, ox, oy, 0, 0);
+  P(g, ox + 2, oy + 14, 'rgba(0,0,0,.25)', 13, 2);
+  P(g, ox + 1, oy + 3, INK, 14, 12); P(g, ox + 2, oy + 4, '#c8844a', 12, 4); P(g, ox + 2, oy + 9, '#a8683a', 12, 5);
+  P(g, ox + 2, oy + 8, '#ffd23c', 12, 1); P(g, ox + 4, oy + 4, '#ffd23c', 1, 10); P(g, ox + 11, oy + 4, '#ffd23c', 1, 10);
+  P(g, ox + 3, oy + 2, INK, 10, 1); P(g, ox + 3, oy + 4, '#e0a060', 8, 1);
+  P(g, ox + 6, oy + 7, INK, 4, 4); P(g, ox + 7, oy + 8, '#ffd23c', 2, 2); P(g, ox + 7, oy + 9, INK, 1, 1);
+}
 function camera(g, ox, oy){
   ground(g, ox, oy, 0, 0);
   P(g, ox + 7, oy + 11, INK, 2, 5); P(g, ox + 4, oy + 15, INK, 8, 1);               // 腳架
@@ -2727,11 +2882,11 @@ function resetRun(){
 
 /* ================= 遊戲說明 ================= */
 const HELP_KID = [
-  ['🎒', '點選人物，開啟裝備箱', 'ㄉㄧㄢˇ ㄒㄩㄢˇ ㄖㄣˊ ㄨˋ，ㄎㄞ ㄑㄧˇ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ'],
+  ['🎒', '點左上角的裝備箱，可以換裝', 'ㄉㄧㄢˇ ㄗㄨㄛˇ ㄕㄤˋ ㄐㄧㄠˇ ˙ㄉㄜ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ，ㄎㄜˇ ㄧˇ ㄏㄨㄢˋ ㄓㄨㄤ'],
   ['📷', '點照相機，拍一張照片', 'ㄉㄧㄢˇ ㄓㄠˋ ㄒㄧㄤˋ ㄐㄧ，ㄆㄞ ㄧ ㄓㄤ ㄓㄠˋ ㄆㄧㄢˋ'],
   ['🎁', '破關得到的獎勵在裝備箱', 'ㄆㄛˋ ㄍㄨㄢ ㄉㄜˊ ㄉㄠˋ ˙ㄉㄜ ㄐㄧㄤˇ ㄌㄧˋ ㄗㄞˋ ㄓㄨㄤ ㄅㄟˋ ㄒㄧㄤ'],
   ['🐶', '解開電子鎖，救出小動物', 'ㄐㄧㄝˇ ㄎㄞ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ，ㄐㄧㄡˋ ㄔㄨ ㄒㄧㄠˇ ㄉㄨㄥˋ ㄨˋ'],
-  ['🦴', '動物都救出來了，拿食物送給牠們', 'ㄉㄨㄥˋ ㄨˋ ㄉㄡ ㄐㄧㄡˋ ㄔㄨ ㄌㄞˊ ˙ㄌㄜ，ㄋㄚˊ ㄕˊ ㄨˋ ㄙㄨㄥˋ ㄍㄟˇ ㄊㄚ ˙ㄇㄣ'],
+  ['🦴', '有時候會拿到食物，送給動物吃', 'ㄧㄡˇ ㄕˊ ˙ㄏㄡ ㄏㄨㄟˋ ㄋㄚˊ ㄉㄠˋ ㄕˊ ㄨˋ，ㄙㄨㄥˋ ㄍㄟˇ ㄉㄨㄥˋ ㄨˋ ㄔ'],
   ['👆', '點地圖，小偵探就會走過去', 'ㄉㄧㄢˇ ㄉㄧˋ ㄊㄨˊ，ㄒㄧㄠˇ ㄓㄣ ㄊㄢˋ ㄐㄧㄡˋ ㄏㄨㄟˋ ㄗㄡˇ ㄍㄨㄛˋ ㄑㄩˋ'],
   ['🗺️', '點框起來的格子，就能進關卡', 'ㄉㄧㄢˇ ㄎㄨㄤ ㄑㄧˇ ㄌㄞˊ ˙ㄉㄜ ㄍㄜˊ ˙ㄗ，ㄐㄧㄡˋ ㄋㄥˊ ㄐㄧㄣˋ ㄍㄨㄢ ㄑㄧㄚˇ'],
   ['👇', '跟著箭頭，點門上的電子鎖', 'ㄍㄣ ˙ㄓㄜ ㄐㄧㄢˋ ㄊㄡˊ，ㄉㄧㄢˇ ㄇㄣˊ ㄕㄤˋ ˙ㄉㄜ ㄉㄧㄢˋ ㄗˇ ㄙㄨㄛˇ'],
@@ -2747,7 +2902,7 @@ const HELP_KID = [
   ['🚨', '錯三次，警鈴會響', 'ㄘㄨㄛˋ ㄙㄢ ㄘˋ，ㄐㄧㄥˇ ㄌㄧㄥˊ ㄏㄨㄟˋ ㄒㄧㄤˇ'],
   ['🔑', '點對的鑰匙，關掉警鈴', 'ㄉㄧㄢˇ ㄉㄨㄟˋ ˙ㄉㄜ ㄧㄠˋ ˙ㄕ，ㄍㄨㄢ ㄉㄧㄠˋ ㄐㄧㄥˇ ㄌㄧㄥˊ'],
 ];
-const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點人物可以開啟裝備箱換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），後面每個島各有一個分類按鈕（動物島、恐龍島、交通島、積木島、時鐘島），放那個島破關得到的獎勵（帽子是積木島的獎勵，眼鏡是時鐘島的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物：狗狗、貓咪、兔子、小豬、小雞，每次隨機出現一隻還沒救過的，救過的不會再出現；五隻都救出來以後，動物島還是可以繼續玩：籠子裡改放隨機的食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾），打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進裝備箱，在裝備箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會汪汪叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後還是可以玩，但不再送）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車裡隨機送一樣還沒拿到的；在裝備箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，積木之間不會疊在一起，同一種形狀大小都一樣，長方形可以橫放或直放，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。接著是排順序：十個積木橫排成一列，左邊寫「前」、右邊寫「後」，問兩題「從前面（後面）數來第幾個是什麼形狀？」，一題從前面、一題從後面，點形狀卡作答（卡片只有形狀、沒有顏色）。六題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的。第 5 關「時鐘島」練習認識整點和半點：一次四個時鐘（兩個整點、兩個半點），短針是紅色、長針是藍色，右邊有一句話要一格一格填數字（點 1～12）：整點是「短針指在（ ），長針指在（ ），是（ ）點」，半點是「短針指在（ ）和（ ）之間，長針指在（ ），是（ ）點半」（「和」前後兩格可以對調）。四個時鐘都填對就過關，從圓眼鏡、方眼鏡、墨鏡、單眼鏡裡隨機送一副還沒拿到的。之後的關卡會得到放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
+const HELP_PARENT = '主畫面是一張可以走動的像素藏寶圖（用ㄅㄆㄇ森林的地圖改的），上面有六個關卡，每個佔 6 格不規則的區塊（有框，關卡名字寫在格子裡）；左下角有一台照相機，走過去（或點它）會幫小偵探拍一張照：目前的穿搭、寵物和坐騎都會入鏡，背景每次隨機（海邊、森林、星空、夕陽城市、雪地、花田、太空），可以按「再拍一張」換背景，或「存照片」存成圖片（手機也可以長按照片儲存）。點地圖上任何地方，小偵探就會自己走過去（電腦也可以用方向鍵或 WASD）；點關卡區塊裡任何一格，小偵探會走過去並進入那一關；下一個要去的關卡上面有跳動的「！」。還沒開放的關卡會變暗並顯示鎖頭，前一關過關才會打開。點地圖左上角的裝備箱可以換裝（一開始只有衣服顏色、頭髮造型、頭髮顏色），後面每個島各有一個分類按鈕（動物島、恐龍島、交通島、積木島、時鐘島），放那個島破關得到的獎勵（帽子是積木島的獎勵，眼鏡是時鐘島的獎勵），每過一關送一樣，點一下換上、再點一下拿下來。目前開放第 1 關「動物島」，練習「湊十」（10 的合成與分解），是一年級加減法的基礎：島的大門有六道電子鎖，門後關著一隻小動物（狗狗、貓咪、兔子、小豬、小雞、鴨子、天竺鼠、熊熊，每次隨機出現一隻還沒救過的，救過的不會再出現）或一樣食物（骨頭、小魚、紅蘿蔔、玉米、蘋果、西瓜、餅乾）：裝備箱裡還沒有動物時一定是動物，之後動物和食物隨機，八隻都救出來以後就只有食物。打開六道門拿到食物後，選一隻已經救出來的動物送給牠，動物會很開心，畫面出現大愛心（背景和動物的動作每次隨機）。電子鎖會顯示 1～9 的一個數字，小孩要按出跟它加起來是 10 的數字，再按「#」開門；「✱」可以清除重按。電腦也可以直接用鍵盤數字鍵，Enter 等於「#」。六道門都打開就過關，救出的動物會放進裝備箱，在裝備箱選了哪一隻，牠會在藏寶圖上跟著小偵探走，點牠會叫；藏寶圖上也會插旗子，並開放下一個島。第 2 關「恐龍島」練習數數（2～10）：10×10 的地上散著東西，從十種（暴龍、三角龍、腕龍、劍龍的腳印，骨頭、恐龍蛋、樹葉、石頭、貝殼、化石）裡每次隨機挑五種，同一種散在附近，每種 2～10 個（數量都不一樣）；下方問「○○有幾個？」時，那一種會一閃一閃發光，點下面的答案卡 2～10 作答（電腦也可以按數字鍵，0 代表 10）。答錯會說「再數一數！」，五題都答對就過關，每次過關從恐龍、恐龍帽、恐龍裝、恐龍腳鞋、恐龍面具裡隨機送一樣還沒拿到的（五樣都拿到後改送恐龍造型餅乾：暴龍、三角龍、腕龍、劍龍、翼龍，可以選一隻動物餵牠）。第 3 關「交通島」練習比較長短和比多少：第 1 題、第 2 題是紅、藍、黃三台車同時從左邊開到右邊，一台直直開、一台歪歪扭扭、一台直的但有一點斜，三台同時到終點後車子變成字卡，第 1 題問「哪一台車開的路最短？」（直直開的那台，有一點斜的會長一點點），第 2 題問「哪一台車開的路最長？」（歪歪扭扭的那台），點字卡或那一條車道作答（電腦也可以按 1～3）。第 3 題是停車場：上面一排汽車、下面一排機車（各 2～9 台，數量隨機而且不一樣多，從左邊對齊排，方便一個對一個比），先問「汽車和機車，哪一種比較多？」，點汽車或機車按鈕（或點那一排）作答；答對再問「汽車比機車多幾台？」，點 1～8 的數字作答。第 4 題是紅綠燈：兩線道的馬路從左邊到右邊，右邊是斑馬線、人行道和紅綠燈；汽車（2～7 台）和機車（1～4 台）陸陸續續從左邊開過來，燈號從綠燈變黃燈再變紅燈，大家在停止線前排隊停下來，先問「汽車有幾台？」，答對再問「機車有幾台？」，點 1～8 作答。四題都答對就過關，從敞篷車、機車、腳踏車、飛機、滑步車、馬車裡隨機送一樣還沒拿到的；六樣都拿到後改送顏料，可以選一台交通工具換成八種顏色之一；在裝備箱選了以後，小偵探在藏寶圖上會坐在上面。第 4 關「積木島」練習認識平面圖形：用正方形、長方形、圓形、三角形拼成的圖案（房子、機器人、火箭、火車、城堡、汽車六種隨機一種，積木之間不會疊在一起，同一種形狀大小都一樣，長方形可以橫放或直放，顏色隨機、也可能左右翻過來；每種形狀 1～8 個，長方形是 2:1，不會跟正方形搞混），依序問「正方形有幾個？」「長方形有幾個？」「圓形有幾個？」「三角形有幾個？」，點 1～8 作答，答對時那一種形狀外面會亮一圈。接著是排順序：十個積木橫排成一列，左邊寫「前」、右邊寫「後」，問兩題「從前面（後面）數來第幾個是什麼形狀？」，一題從前面、一題從後面，點形狀卡作答（卡片只有形狀、沒有顏色）。六題都答對就過關，從偵探帽、棒球帽、安全帽、巫師帽、斗笠裡隨機送一頂還沒拿到的；五頂都拿到後改送顏料，可以選一頂帽子換顏色。第 5 關「時鐘島」練習認識整點和半點：一次四個時鐘（兩個整點、兩個半點），短針是紅色、長針是藍色，右邊分三次問、一格一格填數字（點 1～12）：先問短針（整點「短針指在（ ）。」、半點「短針指在（ ）和（ ）之間。」，「和」前後兩格可以對調），再問長針「長針指在（ ）。」，最後問「是（ ）點。」或「是（ ）點半。」，答過的句子會留在上面。四個時鐘都填對就過關，從圓眼鏡、方眼鏡、墨鏡、單眼鏡裡隨機送一副還沒拿到的；四副都拿到後改送顏料，可以選一副眼鏡換顏色。之後的關卡會得到放大鏡、披風、警察裝、公主裝、棒棒糖。累計答錯 3 次會響警鈴，畫面出現 8 把鑰匙，點對答案的那把才會關掉警鈴，錯誤次數歸零。星星依答錯總次數給：沒錯 3 顆、錯 1–2 次 2 顆、更多 1 顆。';
 const HELP_COMMON = '上方按鈕：「國字」關掉可只看注音；「👂 聽」開啟後，題目旁才會出現「🔊聽」按鈕，可用瀏覽器朗讀；「音效」開關遊戲音效；「地圖」回到藏寶圖（不會清掉進度）。偵探的造型和過關進度只存在這台裝置的瀏覽器裡。';
 let helpOpen = false;
 function openHelp(){
@@ -2959,6 +3114,7 @@ function blocksCleared(){
   if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
   save(); renderHud(S.blk.qs.length);
   setMsg(W.blkDone, '🧱', 'ok');
+  if (!item){ SFX.clear(); setTimeout(() => paintPanel('hat', BLOCK_PRIZES, () => enterBlocks()), 600); return; }   // 帽子都送完了：送顏料
   const stars = S.blk.wrong === 0 ? 3 : S.blk.wrong <= 2 ? 2 : 1;
   celebrate(`<div class="say">${T(W.blkDone)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
     item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
@@ -2973,7 +3129,8 @@ function blocksCleared(){
 const CLK_Q = 4;
 const CLK_T = {
   short:['短針', 'ㄉㄨㄢˇ ㄓㄣ'], long:['長針', 'ㄔㄤˊ ㄓㄣ'], at:['指在', 'ㄓˇ ㄗㄞˋ'], and:['和', 'ㄏㄜˊ'], between:['之間，', 'ㄓ ㄐㄧㄢ，'],
-  comma:['，', '，'], is:['，是', '，ㄕˋ'], oclock:['點。', 'ㄉㄧㄢˇ。'], half:['點半。', 'ㄉㄧㄢˇ ㄅㄢˋ。'],
+  between2:['之間。', 'ㄓ ㄐㄧㄢ。'], period:['。', '。'], is:['是', 'ㄕˋ'], oclock:['點。', 'ㄉㄧㄢˇ。'], half:['點半。', 'ㄉㄧㄢˇ ㄅㄢˋ。'],
+  qShort:['短針指在哪裡？', 'ㄉㄨㄢˇ ㄓㄣ ㄓˇ ㄗㄞˋ ㄋㄚˇ ˙ㄌㄧ？'], qLong:['長針指在哪裡？', 'ㄔㄤˊ ㄓㄣ ㄓˇ ㄗㄞˋ ㄋㄚˇ ˙ㄌㄧ？'], qTime:['現在是幾點？', 'ㄒㄧㄢˋ ㄗㄞˋ ㄕˋ ㄐㄧˇ ㄉㄧㄢˇ？'],
   ask:['看時鐘，填填看！', 'ㄎㄢˋ ㄕˊ ㄓㄨㄥ，ㄊㄧㄢˊ ㄊㄧㄢˊ ㄎㄢˋ！'],
   done:['四個時鐘都答對了！', 'ㄙˋ ˙ㄍㄜ ㄕˊ ㄓㄨㄥ ㄉㄡ ㄉㄚˊ ㄉㄨㄟˋ ˙ㄌㄜ！']
 };
@@ -2984,6 +3141,9 @@ function makeClocks(){
 }
 // 每一格的正確答案（半點的「和」前後兩格，順序可以對調）
 const clkBlanks = c => c.half ? [[c.h, c.h % 12 + 1], [c.h, c.h % 12 + 1], [6], [c.h]] : [[c.h], [12], [c.h]];
+// 第幾格在第幾句（0 短針、1 長針、2 幾點）
+const clkLine = (c, bi) => Math.min(2, c.half ? [0, 0, 1, 2][bi] ?? 2 : bi);
+const clkAsk = () => { const K = S.clk, c = K.list[Math.min(K.ci, CLK_Q - 1)]; setMsg([CLK_T.qShort, CLK_T.qLong, CLK_T.qTime][clkLine(c, K.bi)], '⏰'); };
 function clockSvg(c){
   const cx = 60, cy = 60, ang = deg => (deg - 90) * Math.PI / 180;
   const nums = Array.from({ length:12 }, (_, i) => { const n = i + 1, a = ang(n * 30);
@@ -2994,7 +3154,7 @@ function clockSvg(c){
     return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#1b1b2f" stroke-width="${w + 3}" stroke-linecap="square"/><line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${col}" stroke-width="${w}" stroke-linecap="square"/>`; };
   return `<circle cx="60" cy="60" r="57" fill="#1b1b2f"/><circle cx="60" cy="60" r="54" fill="#ffd23c"/><circle cx="60" cy="60" r="50" fill="#1b1b2f"/><circle cx="60" cy="60" r="48.5" fill="#fffdf4"/>
     <g stroke="#1b1b2f">${ticks}</g><g class="nums">${nums}</g>
-    ${hand(c.half ? (c.h % 12 + .5) * 30 : c.h * 30, 24, 6, '#e83838')}${hand(c.half ? 180 : 0, 38, 4, '#2c64d8')}
+    ${hand(c.half ? (c.h % 12 + .5) * 30 : c.h * 30, 19, 6, '#e83838')}${hand(c.half ? 180 : 0, 29, 4, '#2c64d8')}
     <circle cx="60" cy="60" r="4.5" fill="#1b1b2f"/><circle cx="60" cy="60" r="2" fill="#ffd23c"/>`;
 }
 function renderClock(){
@@ -3003,16 +3163,19 @@ function renderClock(){
   $('clkSvg').innerHTML = clockSvg(c);
   const blank = i => `<span class="blank ${i < K.bi ? 'done' : i === K.bi ? 'now' : ''}">${i < K.bi ? K.filled[i] : ''}</span>`;
   const t = k => T(CLK_T[k]), sh = `<span class="hs">${t('short')}</span>`, lo = `<span class="hl">${t('long')}</span>`;
-  $('clkSent').innerHTML = c.half
-    ? `${sh}${t('at')}${blank(0)}${t('and')}${blank(1)}${t('between')}${lo}${t('at')}${blank(2)}${t('is')}${blank(3)}${t('half')}`
-    : `${sh}${t('at')}${blank(0)}${t('comma')}${lo}${t('at')}${blank(1)}${t('is')}${blank(2)}${t('oclock')}`;
+  // 一次只問一句：先問短針、再問長針、最後問幾點；答過的句子留在上面
+  const lines = c.half
+    ? [`${sh}${t('at')}${blank(0)}${t('and')}${blank(1)}${t('between2')}`, `${lo}${t('at')}${blank(2)}${t('period')}`, `${t('is')}${blank(3)}${t('half')}`]
+    : [`${sh}${t('at')}${blank(0)}${t('period')}`, `${lo}${t('at')}${blank(1)}${t('period')}`, `${t('is')}${blank(2)}${t('oclock')}`];
+  const k = clkLine(c, K.bi);
+  $('clkSent').innerHTML = lines.slice(0, k + 1).map((l, i) => `<div class="cl ${i < k ? 'past' : ''}">${l}</div>`).join('');
   $('clkKeys').innerHTML = Array.from({ length:12 }, (_, i) => `<button class="ans" data-clk="${i + 1}">${i + 1}</button>`).join('');
 }
 function enterClock(){
   SFX.ok();
   Object.assign(S, { view:'clock', clk:makeClocks() });
   showView();
-  setMsg(CLK_T.ask, '⏰');
+  clkAsk();
 }
 function answerClock(btn){
   const K = S.clk;
@@ -3022,18 +3185,18 @@ function answerClock(btn){
   const right = ok.includes(n) && !(c.half && K.bi === 1 && n === K.filled[0]);
   if (right){
     SFX.key(); K.filled[K.bi] = n; K.bi++;
-    if (K.bi < clkBlanks(c).length){ renderClock(); setMsg(CLK_T.ask, '⏰'); return; }
+    if (K.bi < clkBlanks(c).length){ renderClock(); clkAsk(); return; }
     K.busy = true; renderClock(); SFX.ok(); setMsg(W.ok, '✅', 'ok');
     $('clkKeys').querySelectorAll('.ans').forEach(b => b.disabled = true);
     K.ci++; renderHud(K.ci);
     setTimeout(() => {
       K.busy = false; K.bi = 0; K.filled = [];
-      if (K.ci < CLK_Q){ renderClock(); setMsg(CLK_T.ask, '⏰'); } else clockCleared();
+      if (K.ci < CLK_Q){ renderClock(); clkAsk(); } else clockCleared();
     }, 1400);
   } else {
     SFX.no(); K.wrong++; btn.classList.add('no'); btn.disabled = true;
     setMsg(W.lookAgain, '🔍', 'no');
-    setTimeout(() => { if (S.view === 'clock' && !K.busy && msgSpeech === W.lookAgain[0]) setMsg(CLK_T.ask, '⏰'); }, 1500);
+    setTimeout(() => { if (S.view === 'clock' && !K.busy && msgSpeech === W.lookAgain[0]) clkAsk(); }, 1500);
   }
 }
 $('clkKeys').addEventListener('click', e => { const b = e.target.closest('[data-clk]'); if (b){ b.blur(); answerClock(b); } });
@@ -3047,6 +3210,7 @@ function clockCleared(){
   if (item){ S.items.push(item[0]); S.look[item[3]] = item[0]; renderDet(); }
   save(); renderHud(CLK_Q);
   setMsg(CLK_T.done, '⏰', 'ok');
+  if (!item){ SFX.clear(); setTimeout(() => paintPanel('glasses', CLOCK_PRIZES, () => enterClock()), 600); return; }   // 眼鏡都送完了：送顏料
   const stars = S.clk.wrong === 0 ? 3 : S.clk.wrong <= 2 ? 2 : 1;
   celebrate(`<div class="say">${T(CLK_T.done)}</div><div class="stars" aria-label="${stars} 顆星">${starsHtml(stars)}</div>`,
     item ? { look:{ ...S.look, [item[3]]:item[0] }, part:item[3], text:[`${item[1]}${item[4][0]}`, `${item[2]} ${item[4][1]}`] } : null,
